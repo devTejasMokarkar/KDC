@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Rakesh Dry Cleaners
 
-## Getting Started
+A Next.js 14 landing and booking experience for Rakesh Dry Cleaners (Nagpur), featuring an immersive scroll-driven canvas sequence, service discovery, and a unified in-page booking flow that confirms orders via WhatsApp.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Loading screen** — covers the first paint until the hero frame set is preloaded.
+- **Scroll sequence** — a 300-frame canvas playback driven by scroll position, with dynamic copy beats. Respects `prefers-reduced-motion` and uses mobile-sized frames on small screens.
+- **Services** — cards for Wash, Wash & Iron, Dry Clean, Colour Restore, and Rafoo (mending), each with a Book-now action that preselects the matching booking tab.
+- **Booking** — category tabs + sub-category filters, item picker with quantity controls, date/time pills, optional pickup address and instructions, and a live order summary with estimated total. Confirming opens a pre-filled WhatsApp message.
+- **Trust & contact** — stats, testimonials, fabric-care pillars, working hours, phone/email links, and a Google Maps embed modal.
+- **WhatsApp floating button** — always-available chat shortcut with a pulse animation.
+- **Multilingual** — full English / Marathi / Hindi UI with a language switcher in the navbar; preference persisted in `localStorage`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Next.js 14 (App Router), React 18, TypeScript (strict)
+- Custom CSS via `app/globals.css` (no CSS framework)
+- Vitest + Testing Library + jsdom for unit/component tests
+- ESLint (`next/core-web-vitals`)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
 
-## Learn More
+- `app/page.tsx` — page sections, service catalog, map modal, and booking state.
+- `app/layout.tsx` — global metadata, `LanguageProvider`, and `WhatsAppButton`.
+- `app/error.tsx`, `app/not-found.tsx` — translated error screens.
+- `components/Navbar.tsx` — responsive navigation, scrollspy, language switcher, accessible mobile menu.
+- `components/SequenceCanvas.tsx` — preloads the frame set and renders the scroll-driven canvas sequence.
+- `components/LoadingScreen.tsx` — progress overlay driven by a `kdc:loadprogress` custom event.
+- `components/BookingClient.tsx` — booking tabs, item picker, scheduling, and WhatsApp summary.
+- `components/CardFlip.tsx`, `components/WhatsAppButton.tsx`, `components/LanguageSwitcher.tsx`.
+- `lib/i18n.tsx` — i18n provider/context (`useI18n`, `t()`).
+- `lib/translations.ts` — `en` / `mr` / `hi` dictionaries of namespaced keys.
+- `lib/service-data.ts` — categories, pricing items, time slots, and date helpers.
+- `public/frames` / `public/frames-mobile` — hero sequence images.
+- `lib/__tests__`, `app/__tests__`, `components/__tests__` — test suites.
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `npm run dev` — start the development server
+- `npm run build` — build the production bundle
+- `npm run start` — start the production server
+- `npm run lint` — run ESLint
+- `npm run test` — run the Vitest suite
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Notes
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Booking data lives entirely in the browser; confirmation opens a WhatsApp chat with a generated order summary.
+- There is no backend and no order-tracking UI.
+- Frame preloading performance is dominated by `public/frames`; the loader falls back after a timeout.
