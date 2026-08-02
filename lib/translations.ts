@@ -155,7 +155,6 @@ export const en: Record<string, string> = {
 
   'card.hint': 'Tap to see details',
   'card.bookNow': 'Book now',
-  'card.close': 'Close',
 
   'booking.label': 'Booking',
   'booking.title': 'Schedule your collection or check drop-in availability.',
@@ -424,7 +423,6 @@ export const mr: Record<string, string> = {
 
   'card.hint': 'तपशीलांसाठी टॅप करा',
   'card.bookNow': 'आता बुक करा',
-  'card.close': 'बंद करा',
 
   'booking.label': 'बुकिंग',
   'booking.title': 'तुमचे पिकअप शेड्यूल करा किंवा ड्रॉप-इन उपलब्धता तपासा.',
@@ -692,7 +690,6 @@ export const hi: Record<string, string> = {
 
   'card.hint': 'विवरण के लिए टैप करें',
   'card.bookNow': 'अभी बुक करें',
-  'card.close': 'बंद करें',
 
   'booking.label': 'बुकिंग',
   'booking.title': 'अपना पिकअप शेड्यूल करें या ड्रॉप-इन उपलब्धता देखें।',

@@ -2633,37 +2633,6 @@ body {
   height: 16px;
 }
 
-.flip-card__close {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 3;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: none;
-  border-radius: 999px;
-  background: var(--surface-bg);
-  color: var(--text-muted);
-  cursor: pointer;
-  box-shadow: 0 4px 12px -6px rgba(0, 0, 0, .3);
-  transition: background .3s var(--ease-silk), color .3s var(--ease-silk), transform .3s var(--ease-silk);
-}
-
-.flip-card__close:hover {
-  background: var(--surface-bg-strong);
-  color: var(--text-heading);
-  transform: rotate(90deg);
-}
-
-.flip-card__close svg {
-  width: 14px;
-  height: 14px;
-}
-
 @keyframes flip-card-scale {
   0% {
     transform: scale(2);
@@ -2893,9 +2862,7 @@ body {
     grid-template-columns: 1fr 1fr
   }
 
-  /* Mobile: sharp 2D tap-reveal instead of the 3D flip (avoids GPU blur).
-     Reveal is driven by the .flip-card--open state (React toggle), NOT by
-     :hover/:focus-within, so scrolling never flips the card back. */
+  /* Mobile: sharp 2D tap-reveal instead of the 3D flip (avoids GPU blur) */
   .flip-card {
     perspective: none
   }
@@ -2919,7 +2886,6 @@ body {
     z-index: 2;
     -webkit-transform: none;
     transform: none;
-    cursor: pointer;
     transition: opacity .35s var(--ease-silk)
   }
 
@@ -2931,18 +2897,16 @@ body {
     transition: opacity .35s var(--ease-silk)
   }
 
-  .flip-card--open .flip-card__front {
+  .flip-card:hover .flip-card__front,
+  .flip-card:focus-within .flip-card__front {
     opacity: 0;
     pointer-events: none
   }
 
-  .flip-card--open .flip-card__back {
+  .flip-card:hover .flip-card__back,
+  .flip-card:focus-within .flip-card__back {
     opacity: 1;
     pointer-events: auto
-  }
-
-  .flip-card__close {
-    display: flex
   }
 
   .stat-strip {

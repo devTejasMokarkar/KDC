@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import type { ReactNode, MouseEvent, KeyboardEvent } from 'react';
+import type { ReactNode } from 'react';
 import Image from 'next/image';
 import { useI18n } from '@/lib/i18n';
 
@@ -29,43 +28,11 @@ export default function CardFlip({
   className = '',
 }: CardFlipProps) {
   const { t } = useI18n();
-  const [open, setOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 900px)');
-    const update = () => setIsMobile(mq.matches);
-    update();
-    mq.addEventListener('change', update);
-    return () => mq.removeEventListener('change', update);
-  }, []);
-
-  const toggle = () => setOpen((v) => !v);
-
-  const closeBack = (e: MouseEvent<HTMLElement>) => {
-    if ((e.target as HTMLElement).closest('button')) return;
-    setOpen(false);
-  };
-
-  const onFrontKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      toggle();
-    }
-  };
-
   return (
-    <div className={`flip-card ${open ? 'flip-card--open' : ''} ${className}`}>
+    <div className={`flip-card ${className}`}>
       <div className="flip-card__inner">
         {/* Front of card */}
-        <div
-          className="flip-card__face flip-card__front"
-          onClick={isMobile ? toggle : undefined}
-          role={isMobile ? 'button' : undefined}
-          tabIndex={isMobile ? 0 : undefined}
-          aria-expanded={isMobile ? open : undefined}
-          onKeyDown={isMobile ? onFrontKeyDown : undefined}
-        >
+        <div className="flip-card__face flip-card__front">
           <div className="flip-card__hint-badge" aria-hidden="true">
             <svg
               viewBox="0 0 24 24"
@@ -124,29 +91,7 @@ export default function CardFlip({
         </div>
 
         {/* Back of card */}
-        <div className="flip-card__face flip-card__back" onClick={isMobile ? closeBack : undefined}>
-          <button
-            type="button"
-            className="flip-card__close"
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpen(false);
-            }}
-            aria-label={t('card.close')}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
-          </button>
+        <div className="flip-card__face flip-card__back">
           <div className="flip-card__back-head">
             <h3 className="flip-card__title">{title}</h3>
             {description && <p className="flip-card__desc">{description}</p>}
