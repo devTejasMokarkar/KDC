@@ -1,6 +1,8 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { scrollToSection } from '@/lib/navigation';
+import { useDialog } from '@/lib/use-dialog';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useI18n } from '@/lib/i18n';
 
@@ -65,12 +67,15 @@ export default function Navbar() {
   const { t } = useI18n();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('#the-process');
+  const [activeSection, setActiveSection] = useState('');
+  const drawerRef = useRef<HTMLDivElement>(null);
+  useDialog(menuOpen, drawerRef, () => setMenuOpen(false));
 
 
   // Scroll listener
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
@@ -82,43 +87,37 @@ export default function Navbar() {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  // Scrollspy — highlight the nav link for the section in view
+  // Track every section, including those with no navigation link. This clears
+  // Booking when reviews or fabric care actually enter the reading area.
   useEffect(() => {
-    const ids = NAV_LINKS.map((link) => link.href).filter((href) => href.startsWith('#'));
-    const sections = ids
-      .map((id) => document.querySelector<HTMLElement>(id))
-      .filter((el): el is HTMLElement => !!el);
-    if (sections.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-        const current = visible[0];
-        if (current && current.target.id) {
-          setActiveSection(`#${current.target.id}`);
-        }
-      },
-      { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
-    );
-
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+    const sections = Array.from(document.querySelectorAll<HTMLElement>('main > section[id]'));
+    let frame = 0;
+    const update = () => {
+      const header = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--nav-height')) || 72;
+      const probe = header + Math.min(window.innerHeight * .18, 130);
+      const current = sections.find(section => {
+        const rect = section.getBoundingClientRect();
+        return rect.top <= probe && rect.bottom > probe;
+      });
+      setActiveSection(current ? `#${current.id}` : '');
+    };
+    const schedule = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(update);
+    };
+    update();
+    const layout = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(schedule) : null;
+    const main = document.querySelector('main');
+    if (main) layout?.observe(main);
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      layout?.disconnect();
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+    };
   }, []);
-
-  // Escape closes the drawer
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenuOpen(false); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
-
-  // Lock body scroll while the drawer is open
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [menuOpen]);
 
   // Close menu and scroll to section
   const handleNavClick = useCallback((href: string) => {
@@ -127,11 +126,7 @@ export default function Navbar() {
       window.location.href = href;
       return;
     }
-    const el = document.querySelector(href);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-      return;
-    }
+    if (scrollToSection(href === '#main-content' ? '#the-process' : href)) return;
     // Section not on the current page — route to the homepage section anchor.
     window.location.href = `/${href}`;
   }, []);
@@ -145,10 +140,10 @@ export default function Navbar() {
         >
           {/* Wordmark */}
           <a
-            href="#top"
+            href="#the-process"
             className="navbar__wordmark"
             aria-label={t('nav.wordmarkAria')}
-            onClick={(e) => { e.preventDefault(); setMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            onClick={(e) => { e.preventDefault(); setMenuOpen(false); window.history.replaceState(null, '', '#the-process'); window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }}
           >
             Rakesh
             <span>Dry Cleaners</span>
@@ -161,6 +156,7 @@ export default function Navbar() {
                 <a
                   href={link.href}
                   className={activeSection === link.href ? 'active' : ''}
+                  aria-current={activeSection === link.href ? 'location' : undefined}
                   onClick={(e) => { e.preventDefault(); handleNavClick(link.href); }}
                 >
                   {t(link.labelKey)}
@@ -171,10 +167,12 @@ export default function Navbar() {
 
           <div className="navbar__right">
             <LanguageSwitcher />
+            <a className="nav-book" href="#book">{t('hero.book')}<span aria-hidden="true">↗</span></a>
             <button
               className={`navbar__mobile-toggle${menuOpen ? ' active' : ''}`}
-              aria-label={menuOpen ? t('nav.closeMenu') : t('nav.openMenu')}
+              aria-label={t('nav.openMenu')}
               aria-expanded={menuOpen}
+              aria-controls="mobile-navigation-menu"
               onClick={() => setMenuOpen(o => !o)}
             >
               <span />
@@ -197,11 +195,14 @@ export default function Navbar() {
                     handleNavClick(link.href);
                   }
                 }}
-                className="action-link"
+                className={`action-link${activeSection === (link.href === '#main-content' ? '#the-process' : link.href) ? ' is-active' : ''}`}
+                aria-current={activeSection === (link.href === '#main-content' ? '#the-process' : link.href) ? 'location' : undefined}
+                aria-label={t(link.href === '#main-content' ? 'nav.home' : link.href === '#services' ? 'nav.services' : link.href.startsWith('tel:') ? 'nav.call' : link.href === '#book' ? 'nav.billing' : 'nav.contact')}
               >
                 <div className="action-icon">
                   {link.icon}
                 </div>
+                <span className="action-label">{t(link.href === '#main-content' ? 'nav.home' : link.href === '#services' ? 'nav.services' : link.href.startsWith('tel:') ? 'nav.call' : link.href === '#book' ? 'nav.billing' : 'nav.contact')}</span>
               </a>
             ))}
           </div>
@@ -211,16 +212,22 @@ export default function Navbar() {
       {/* Mobile drawer */}
       <div
         className={`mobile-menu${menuOpen ? ' open' : ''}`}
+        id="mobile-navigation-menu"
+        ref={drawerRef}
+        tabIndex={-1}
         aria-hidden={!menuOpen}
+        aria-modal={menuOpen || undefined}
         role="dialog"
         aria-label={t('nav.menuAria')}
       >
+        <button type="button" className="mobile-menu-close" onClick={() => setMenuOpen(false)} tabIndex={menuOpen ? 0 : -1} aria-label={t('nav.closeMenu')}>×</button>
         <ul role="list">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
               <a
                 href={link.href}
                 className={activeSection === link.href ? 'active' : ''}
+                  aria-current={activeSection === link.href ? 'location' : undefined}
                 onClick={(e) => { e.preventDefault(); handleNavClick(link.href); }}
                 tabIndex={menuOpen ? 0 : -1}
               >
@@ -235,6 +242,7 @@ export default function Navbar() {
       {menuOpen && (
         <div
           className="mobile-menu-backdrop"
+          data-modal-backdrop
           onClick={() => setMenuOpen(false)}
           aria-hidden="true"
         />

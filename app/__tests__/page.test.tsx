@@ -9,6 +9,7 @@ describe('HomePage', () => {
   beforeEach(() => {
     location.href = 'http://localhost/';
     vi.clearAllMocks();
+    window.localStorage.clear();
   });
 
   it('renders the main page sections', () => {
@@ -60,4 +61,24 @@ describe('HomePage', () => {
       expect.stringContaining('maps.google.com')
     );
   });
+  it('reselects the same service card after booking tabs were changed manually', async () => {
+    const user = userEvent.setup();
+    render(<HomePage />);
+    await user.click(screen.getByRole('button', { name: 'Book now: Dry Clean' }));
+    await user.click(screen.getByRole('tab', { name: 'Wash' }));
+    await user.click(screen.getByRole('button', { name: 'Book now: Dry Clean' }));
+    expect(screen.getByRole('tab', { name: 'Dry Clean' })).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('focuses and closes the map dialog and restores the view-map button', async () => {
+    const user = userEvent.setup();
+    render(<HomePage />);
+    const trigger = screen.getByRole('button', { name: 'View Map' });
+    await user.click(trigger);
+    expect(screen.getByRole('button', { name: 'Close map' })).toHaveFocus();
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog', { name: 'Find us on the map' })).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+  });
+
 });

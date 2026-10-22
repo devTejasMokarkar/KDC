@@ -5,6 +5,7 @@ import {
   SERVICE_SUBCATS,
   TIME_SLOTS,
   formatDateString,
+  isSlotUnavailable,
   subsFor,
   toLocalDateString,
 } from '@/lib/service-data';
@@ -75,5 +76,20 @@ describe('date helpers', () => {
   it('round-trips a yyyy-mm-dd string back to a readable date', () => {
     const out = formatDateString('2026-08-02');
     expect(out).toMatch(/^[A-Za-z]{3}, Aug 2$/);
+  });
+});
+
+
+describe('collection slot availability', () => {
+  const now = new Date(2026, 9, 21, 13, 0);
+  it('rejects past slots and handles noon and evening correctly', () => {
+    expect(isSlotUnavailable('2026-10-21', '12:00 pm', now)).toBe(true);
+    expect(isSlotUnavailable('2026-10-21', '2:00 pm', now)).toBe(false);
+    expect(isSlotUnavailable('2026-10-20', '6:00 pm', now)).toBe(true);
+    expect(isSlotUnavailable('2026-10-22', '8:00 am', now)).toBe(false);
+  });
+  it('rejects malformed slots', () => {
+    expect(isSlotUnavailable('not-a-date', '8:00 am', now)).toBe(true);
+    expect(isSlotUnavailable('2026-10-22', 'invalid', now)).toBe(true);
   });
 });

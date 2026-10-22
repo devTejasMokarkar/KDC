@@ -1,11 +1,20 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useI18n } from '@/lib/i18n';
 
 const WHATSAPP_NUMBER = '919876543210';
 
 export default function WhatsAppButton() {
   const { t } = useI18n();
+  const [bookingVisible, setBookingVisible] = useState(false);
+  useEffect(() => {
+    const booking = document.getElementById('book');
+    if (!booking) return;
+    const observer = new IntersectionObserver(entries => setBookingVisible(entries.some(entry => entry.isIntersecting)), { rootMargin: '-80px 0px -85px 0px' });
+    observer.observe(booking);
+    return () => observer.disconnect();
+  }, []);
 
   const href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
     t('wa.defaultMessage')
@@ -16,7 +25,7 @@ export default function WhatsAppButton() {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="whatsapp-fab"
+      className={`whatsapp-fab${bookingVisible ? ' whatsapp-fab--booking' : ''}`}
       aria-label={t('wa.chat')}
     >
       <span className="whatsapp-fab__ring whatsapp-fab__ring--one" aria-hidden="true" />

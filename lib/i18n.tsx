@@ -40,19 +40,23 @@ const englishT: TranslateFn = (key, vars) =>
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>('en');
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
-    if (stored === 'mr' || stored === 'hi' || stored === 'en') {
-      setLocaleState(stored);
-    }
+    try {
+      const stored = window.localStorage.getItem(STORAGE_KEY);
+      if (stored === 'mr' || stored === 'hi' || stored === 'en') setLocaleState(stored);
+    } catch { /* Keep language switching usable when storage is disabled. */ }
+    setReady(true);
   }, []);
 
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, locale);
+    if (ready) {
+      try { window.localStorage.setItem(STORAGE_KEY, locale); } catch { /* Storage is optional. */ }
+    }
     document.documentElement.lang = locale;
     document.title = DOC_TITLES[locale];
-  }, [locale]);
+  }, [locale, ready]);
 
   const setLocale = useCallback((next: Locale) => {
     setLocaleState(next);

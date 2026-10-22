@@ -90,14 +90,8 @@ export function initScrollReveal(options: ScrollRevealOptions = {}): Intersectio
       if (entry.isIntersecting) {
         const el = entry.target as HTMLElement;
 
-        // Apply stagger delay if specified
-        const staggerMatch = el.className.match(/stagger-(\d)/);
-        const staggerDelay = staggerMatch ? parseInt(staggerMatch[1], 10) * 50 : 0;
-
-        setTimeout(() => {
-          el.classList.add('is-visible');
-          onReveal?.(el);
-        }, staggerDelay);
+        el.classList.add('is-visible');
+        onReveal?.(el);
 
         if (once) {
           observer.unobserve(el);
@@ -110,7 +104,12 @@ export function initScrollReveal(options: ScrollRevealOptions = {}): Intersectio
 
   // Observe all scroll-reveal elements
   document.querySelectorAll('.scroll-reveal').forEach((el) => {
-    observer.observe(el);
+    if (el.getBoundingClientRect().top < window.innerHeight) {
+      el.classList.add('is-visible');
+    } else {
+      el.classList.add('reveal-ready');
+      observer.observe(el);
+    }
   });
 
   return observer;
@@ -186,7 +185,7 @@ export function initScrollProgress(selector = '.scroll-progress'): (() => void) 
   function updateProgress() {
     const scrollTop = window.scrollY;
     const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = scrollTop / docHeight;
+    const progress = docHeight > 0 ? Math.min(1, Math.max(0, scrollTop / docHeight)) : 0;
     progressBar!.style.transform = `scaleX(${progress})`;
   }
 

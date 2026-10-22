@@ -20,7 +20,7 @@ describe('i18n provider', () => {
   beforeEach(() => {
     window.localStorage.clear();
     window.localStorage.setItem(STORAGE_KEY, 'en');
-    delete document.documentElement.lang;
+    document.documentElement.removeAttribute('lang');
   });
 
   it('defaults to English and renders english text', () => {

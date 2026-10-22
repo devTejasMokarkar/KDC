@@ -110,3 +110,12 @@ export const formatDateString = (value: string, locale?: string) => {
   const [y, m, d] = value.split('-').map(Number);
   return formatDate(new Date(y, m - 1, d), locale);
 };
+
+/** Returns true for elapsed or invalid collection slots in the visitor's local time. */
+export function isSlotUnavailable(date: string, slot: string, now = new Date()): boolean {
+  const match = /^(\d{1,2}):(\d{2})\s*(am|pm)$/i.exec(slot);
+  if (!match || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return true;
+  const hours = Number(match[1]) % 12 + (match[3].toLowerCase() === 'pm' ? 12 : 0);
+  const time = new Date(`${date}T${String(hours).padStart(2, '0')}:${match[2]}:00`).getTime();
+  return !Number.isFinite(time) || time <= now.getTime();
+}

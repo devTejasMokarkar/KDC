@@ -1,139 +1,231 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import BookingClient from '@/components/BookingClient';
 
 const openSpy = vi.fn();
+type User = ReturnType<typeof userEvent.setup>;
+const itemsPanel = () => within(document.getElementById('pricing-panel')!);
+const total = () => document.querySelector('.summary-total strong');
+const currentStep = () => document.querySelector('.booking-progress [aria-current="step"]');
 
-function findBtnIn(container: HTMLElement, selector: string, index: number) {
-  return container.querySelectorAll<HTMLButtonElement>(selector)[index];
+async function addShirt(user: User) {
+  await user.click(screen.getByRole('button', { name: 'Add one Shirt (Wash)' }));
+}
+async function pickupStep(user: User) {
+  await user.click(screen.getByRole('button', { name: /Continue to pickup/ }));
+}
+async function schedule(user: User) {
+  await user.click(within(screen.getByRole('group', { name: 'Preferred date' })).getAllByRole('button')[1]);
+  await user.click(screen.getByRole('button', { name: '10:00 am' }));
+}
+async function checkWadi(user: User) {
+  await user.selectOptions(screen.getByLabelText('Pickup locality'), 'wadi');
+  await user.type(screen.getByLabelText('PIN code'), '440023');
+  await user.click(screen.getByRole('button', { name: 'Check pickup area' }));
+}
+async function finishDropoff(user: User) {
+  await pickupStep(user);
+  await user.click(screen.getByRole('radio', { name: 'Shop drop-off' }));
+  await schedule(user);
+  await user.click(screen.getByRole('button', { name: /Continue to review/ }));
 }
 
-describe('BookingClient', () => {
+describe('guided booking', () => {
   beforeEach(() => {
     openSpy.mockClear();
-    Object.defineProperty(window, 'open', {
-      writable: true,
-      configurable: true,
-      value: openSpy,
-    });
+    window.localStorage.clear();
+    Object.defineProperty(window, 'open', { configurable: true, writable: true, value: openSpy });
   });
 
-  it('renders the default Wash category with its items', () => {
-    const { container } = render(<BookingClient />);
-    expect(screen.getByText('T-Shirt (Wash)')).toBeInTheDocument();
-    expect(screen.getByText('Shirt (Wash)')).toBeInTheDocument();
-    expect(container.querySelector('.svc-tab.active')).toHaveTextContent('Wash');
+  it('starts at Items and prevents skipping empty or incomplete steps', () => {
+    render(<BookingClient />);
+    expect(currentStep()).toHaveTextContent('Items');
+    expect(screen.getByRole('button', { name: /Continue to pickup/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Pickup details/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Review/ })).toBeDisabled();
+    expect(screen.queryByRole('radio', { name: 'Home pickup' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Send request on WhatsApp/ })).not.toBeInTheDocument();
   });
 
-  it('respects the initialCategory prop', () => {
+  it('honours initial categories and changes category and subcategory', async () => {
+    const user = userEvent.setup();
     render(<BookingClient initialCategory="dryclean" />);
-    expect(screen.getByText('Formal Shirt (Dry Clean)')).toBeInTheDocument();
-    const activeTab = document.querySelector('.svc-tab.active');
-    expect(activeTab).toHaveTextContent('Dry Clean');
-  });
-
-  it('switches category tabs and resets the active subcategory', async () => {
-    const user = userEvent.setup();
-    const { container } = render(<BookingClient />);
-    expect(screen.getByText('T-Shirt (Wash)')).toBeInTheDocument();
-
-    await user.click(screen.getByRole('tab', { name: 'Dry Clean' }));
-    expect(screen.getByText('Formal Shirt (Dry Clean)')).toBeInTheDocument();
-    expect(screen.queryByText('T-Shirt (Wash)')).not.toBeInTheDocument();
-
-    const activeSub = container.querySelector('.svc-subtab.active');
-    expect(activeSub).toHaveTextContent('Tops & Shirts');
-  });
-
-  it('switches subcategory and filters items', async () => {
-    const user = userEvent.setup();
-    render(<BookingClient />);
+    expect(itemsPanel().getByText('Formal Shirt (Dry Clean)')).toBeInTheDocument();
+    await user.click(screen.getByRole('tab', { name: 'Wash' }));
     await user.click(screen.getByRole('tab', { name: 'Bottoms' }));
-    expect(screen.getByText('Jeans (Wash)')).toBeInTheDocument();
-    expect(screen.queryByText('T-Shirt (Wash)')).not.toBeInTheDocument();
+    expect(itemsPanel().getByText('Jeans (Wash)')).toBeInTheDocument();
+    expect(itemsPanel().queryByText('Shirt (Wash)')).not.toBeInTheDocument();
   });
 
-  it('adds and removes quantities and updates the total', async () => {
-    const user = userEvent.setup();
-    const { container } = render(<BookingClient />);
-    const total = () => container.querySelector('.summary-total strong');
-
-    await user.click(screen.getByRole('button', { name: 'Add one T-Shirt (Wash)' }));
-    expect(total()).toHaveTextContent('₹200');
-    expect(screen.getByText('1 items')).toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', { name: 'Add one T-Shirt (Wash)' }));
-    expect(total()).toHaveTextContent('₹400');
-    expect(screen.getByText('2 items')).toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', { name: 'Remove one T-Shirt (Wash)' }));
-    expect(total()).toHaveTextContent('₹200');
-    expect(screen.getByText('1 items')).toBeInTheDocument();
-  });
-
-  it('removes an item from the order summary', async () => {
+  it('searches across item types within the selected service', async () => {
     const user = userEvent.setup();
     render(<BookingClient />);
+    await user.type(screen.getByRole('searchbox'), 'Jeans');
+    expect(itemsPanel().getByText('Jeans (Wash)')).toBeInTheDocument();
+    expect(itemsPanel().queryByText('Shirt (Wash)')).not.toBeInTheDocument();
+    await user.clear(screen.getByRole('searchbox'));
+    await user.type(screen.getByRole('searchbox'), 'not-a-garment');
+    expect(screen.getByText(/No matching items/)).toBeInTheDocument();
+  });
 
-    await user.click(screen.getByRole('button', { name: 'Add one Shirt (Wash)' }));
-    expect(screen.getByText('1 items')).toBeInTheDocument();
+  it('edits quantities directly in the summary and updates persisted totals', async () => {
+    const user = userEvent.setup();
+    render(<BookingClient />);
+    await addShirt(user);
+    const quantity = screen.getByRole('spinbutton', { name: 'Order quantity for Shirt (Wash)' });
+    await user.clear(quantity);
+    await user.type(quantity, '3');
+    expect(total()).toHaveTextContent('₹540');
+    expect(screen.getByText('3 items')).toBeInTheDocument();
+    expect(JSON.parse(window.localStorage.getItem('kdc:cart:v1')!)).toEqual({ 'shirt-wash': 3 });
+    await user.click(screen.getByRole('button', { name: 'Decrease order quantity for Shirt (Wash)' }));
+    expect(total()).toHaveTextContent('₹360');
+  });
 
+  it('caps direct quantity input and never stores an empty draft as a removal', async () => {
+    const user = userEvent.setup();
+    render(<BookingClient />);
+    await addShirt(user);
+    const quantity = screen.getByRole('spinbutton', { name: 'Order quantity for Shirt (Wash)' });
+    await user.clear(quantity);
+    expect(total()).toHaveTextContent('₹180');
+    await user.type(quantity, '999');
+    expect(quantity).toHaveValue('99');
+    expect(screen.getByRole('button', { name: 'Increase order quantity for Shirt (Wash)' })).toBeDisabled();
+  });
+
+  it('undoes removal and invalidates the undo when another quantity is edited', async () => {
+    const user = userEvent.setup();
+    render(<BookingClient />);
+    await addShirt(user);
     await user.click(screen.getByRole('button', { name: 'Remove Shirt (Wash) from order' }));
-    expect(screen.queryByText('1 items')).not.toBeInTheDocument();
-    expect(screen.getByText('0 items')).toBeInTheDocument();
-    expect(screen.getByText('Add items to build your order.')).toBeInTheDocument();
+    expect(total()).toHaveTextContent('₹0');
+    await user.click(screen.getByRole('button', { name: 'Undo' }));
+    expect(total()).toHaveTextContent('₹180');
+    await user.click(screen.getByRole('button', { name: 'Remove Shirt (Wash) from order' }));
+    await user.click(screen.getByRole('button', { name: 'Add one T-Shirt (Wash)' }));
+    expect(screen.queryByRole('button', { name: 'Undo' })).not.toBeInTheDocument();
   });
 
-  it('disables confirm until an item, date, and time are selected', async () => {
+  it('requires clear-cart confirmation, supports cancellation, and can undo clearing', async () => {
     const user = userEvent.setup();
-    const { container } = render(<BookingClient />);
-    const confirm = screen.getByRole('button', { name: /Confirm Booking on WhatsApp/ });
-
-    expect(confirm).toBeDisabled();
-
-    await user.click(screen.getByRole('button', { name: 'Add one T-Shirt (Wash)' }));
-    expect(confirm).toBeDisabled();
-
-    await user.click(findBtnIn(container, '.date-grid button', 0));
-    expect(confirm).toBeDisabled();
-
-    await user.click(findBtnIn(container, '.time-grid button', 0));
-    expect(confirm).toBeEnabled();
+    render(<BookingClient />);
+    await addShirt(user);
+    await user.click(screen.getByRole('button', { name: 'Clear cart' }));
+    expect(screen.getByRole('alertdialog', { name: 'Clear your cart?' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Keep items' })).toHaveFocus();
+    await user.keyboard('{Escape}');
+    expect(total()).toHaveTextContent('₹180');
+    expect(screen.getByRole('button', { name: 'Clear cart' })).toHaveFocus();
+    await user.click(screen.getByRole('button', { name: 'Clear cart' }));
+    await user.click(screen.getByRole('button', { name: 'Yes, clear cart' }));
+    expect(screen.getByRole('button', { name: /Continue to pickup/ })).toBeDisabled();
+    await user.click(screen.getByRole('button', { name: 'Undo' }));
+    expect(total()).toHaveTextContent('₹180');
   });
 
-  it('opens WhatsApp with a message summarising the order', async () => {
+  it('restores only valid catalog quantities from storage', () => {
+    window.localStorage.setItem('kdc:cart:v1', JSON.stringify({ 'shirt-wash': 2, 'tshirt-wash': -3, unknown: 5 }));
+    render(<BookingClient />);
+    expect(total()).toHaveTextContent('₹360');
+    expect(JSON.parse(window.localStorage.getItem('kdc:cart:v1')!)).toEqual({ 'shirt-wash': 2 });
+  });
+
+  it('rejects non-Wadi localities even when the PIN matches and offers drop-off', async () => {
     const user = userEvent.setup();
-    const { container } = render(<BookingClient />);
+    render(<BookingClient />);
+    await addShirt(user); await pickupStep(user);
+    await user.selectOptions(screen.getByLabelText('Pickup locality'), 'outside');
+    await user.type(screen.getByLabelText('PIN code'), '440023');
+    await user.click(screen.getByRole('button', { name: 'Check pickup area' }));
+    expect(screen.getByText(/Pickup is available only within Wadi/)).toBeInTheDocument();
+    await schedule(user);
+    await user.type(screen.getByLabelText('Pickup address'), 'Example shop, Nagpur');
+    await user.click(screen.getByRole('button', { name: /Continue to review/ }));
+    expect(currentStep()).toHaveTextContent('Pickup details');
+    expect(screen.queryByRole('button', { name: /Send request/ })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /Choose shop drop-off instead/ }));
+    await user.click(screen.getByRole('button', { name: /Continue to review/ }));
+    expect(currentStep()).toHaveTextContent('Review');
+  });
 
-    await user.click(screen.getByRole('button', { name: 'Add one T-Shirt (Wash)' }));
-    await user.click(screen.getByRole('button', { name: 'Add one Shirt (Wash)' }));
-    await user.click(findBtnIn(container, '.date-grid button', 0));
-    await user.click(findBtnIn(container, '.time-grid button', 0));
+  it('rejects malformed PINs and requires rechecking after a successful check is changed', async () => {
+    const user = userEvent.setup();
+    render(<BookingClient />);
+    await addShirt(user); await pickupStep(user);
+    await user.click(screen.getByRole('button', { name: 'Check pickup area' }));
+    expect(screen.getByText(/Enter a valid 6-digit PIN/)).toBeInTheDocument();
+    await checkWadi(user);
+    expect(screen.getByText(/Wadi pickup can be requested/)).toBeInTheDocument();
+    await user.clear(screen.getByLabelText('PIN code'));
+    await user.type(screen.getByLabelText('PIN code'), '440001');
+    await user.type(screen.getByLabelText('Pickup address'), 'Example house, Wadi');
+    await schedule(user);
+    await user.click(screen.getByRole('button', { name: /Continue to review/ }));
+    expect(screen.getByText(/Check and confirm a Wadi pickup area/)).toBeInTheDocument();
+    expect(currentStep()).toHaveTextContent('Pickup details');
+  });
 
-    await user.click(screen.getByRole('button', { name: /Confirm Booking on WhatsApp/ }));
-
-    expect(openSpy).toHaveBeenCalledTimes(1);
+  it('preserves pickup details and items when going Back and completes a Wadi request', async () => {
+    const user = userEvent.setup();
+    render(<BookingClient />);
+    await addShirt(user); await pickupStep(user); await checkWadi(user);
+    await user.type(screen.getByLabelText('Pickup address'), 'Example house, Main Road, Wadi');
+    await schedule(user);
+    await user.click(screen.getByRole('button', { name: '← Back' }));
+    expect(currentStep()).toHaveTextContent('Items');
+    await pickupStep(user);
+    expect(screen.getByLabelText('Pickup address')).toHaveValue('Example house, Main Road, Wadi');
+    expect(screen.getByRole('button', { name: '10:00 am' })).toHaveAttribute('aria-pressed', 'true');
+    await user.click(screen.getByRole('button', { name: /Continue to review/ }));
+    await user.click(screen.getByRole('button', { name: 'Send request on WhatsApp' }));
     const [url, target, features] = openSpy.mock.calls[0];
-    expect(url).toContain('https://wa.me/919876543210?text=');
-    expect(target).toBe('_blank');
-    expect(features).toBe('noopener,noreferrer');
-
+    expect(target).toBe('_blank'); expect(features).toBe('noopener,noreferrer');
     const text = decodeURIComponent(url.split('text=')[1]);
-    expect(text).toContain('Collection: Home collection');
-    expect(text).toContain('1 x T-Shirt (Wash) — ₹200');
+    expect(text).toContain('Wadi, Nagpur · 440023');
     expect(text).toContain('1 x Shirt (Wash) — ₹180');
-    expect(text).toContain('Estimated Total: ₹380');
+    expect(text).toContain('Pickup charge: Confirmed by the shop');
+    expect(text).toContain('Estimated Total: ₹180');
   });
 
-  it('shows selected date and time in the summary', async () => {
+  it('allows shop drop-off without any pickup address or PIN', async () => {
     const user = userEvent.setup();
-    const { container } = render(<BookingClient />);
+    render(<BookingClient />);
+    await addShirt(user); await finishDropoff(user);
+    expect(currentStep()).toHaveTextContent('Review');
+    expect(screen.getByRole('button', { name: 'Send request on WhatsApp' })).toBeEnabled();
+    await user.click(screen.getByRole('button', { name: 'Send request on WhatsApp' }));
+    const text = decodeURIComponent(openSpy.mock.calls[0][0].split('text=')[1]);
+    expect(text).toContain('Collection: Shop drop-off');
+    expect(text).toContain('Pickup charge: Not applicable for drop-off');
+    expect(text).not.toContain('Pickup address:');
+  });
 
-    await user.click(findBtnIn(container, '.date-grid button', 0));
-    await user.click(findBtnIn(container, '.time-grid button', 2));
+  it('returns to Items if the last item is removed during Review and supports undo', async () => {
+    const user = userEvent.setup();
+    render(<BookingClient />);
+    await addShirt(user); await finishDropoff(user);
+    await user.click(screen.getByRole('button', { name: 'Remove Shirt (Wash) from order' }));
+    expect(currentStep()).toHaveTextContent('Items');
+    await user.click(screen.getByRole('button', { name: 'Undo' }));
+    expect(screen.getByRole('button', { name: /Review/ })).toBeEnabled();
+  });
 
-    const datetime = container.querySelectorAll('.summary-details__row strong')[1];
-    expect(datetime).toHaveTextContent(/12:00 pm/);
+  it('does not reset an available time when the selected date is clicked again', async () => {
+    const user = userEvent.setup();
+    render(<BookingClient />);
+    await addShirt(user); await pickupStep(user); await schedule(user);
+    await user.click(within(screen.getByRole('group', { name: 'Preferred date' })).getAllByRole('button')[1]);
+    expect(screen.getByRole('button', { name: '10:00 am' })).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('uses one keyboard tab stop per service tab list', async () => {
+    const user = userEvent.setup();
+    render(<BookingClient />);
+    const wash = screen.getByRole('tab', { name: 'Wash' }); wash.focus();
+    await user.keyboard('{ArrowRight}');
+    const iron = screen.getByRole('tab', { name: 'Wash & Iron' });
+    expect(iron).toHaveFocus(); expect(iron).toHaveAttribute('tabindex', '0'); expect(wash).toHaveAttribute('tabindex', '-1');
   });
 });

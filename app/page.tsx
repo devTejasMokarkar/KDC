@@ -1,23 +1,25 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useRef } from 'react';
 import type { ReactNode } from 'react';
 import Navbar from '@/components/Navbar';
 import SequenceCanvas from '@/components/SequenceCanvas';
-import LoadingScreen from '@/components/LoadingScreen';
 import BookingClient from '@/components/BookingClient';
 import CardFlip from '@/components/CardFlip';
 import { useI18n } from '@/lib/i18n';
+import { scrollToSection } from '@/lib/navigation';
+import { useDialog } from '@/lib/use-dialog';
+import { SERVICE_ITEMS } from '@/lib/service-data';
 
 /* ==================================================================
    SERVICE CATALOG — main categories (localised at render time)
 ================================================================== */
 const SERVICE_CATEGORIES = [
-  { id: 'wash', from: 180, image: 'wash.png' },
-  { id: 'iron', from: 250, image: 'iron.png' },
-  { id: 'dryclean', from: 300, image: 'dryclean.png' },
-  { id: 'colorrestore', from: 700, image: 'colorrestore.png' },
-  { id: 'rafoo', from: 120, image: 'rafoo.png' },
+  { id: 'wash', image: 'wash.png' },
+  { id: 'iron', image: 'iron.png' },
+  { id: 'dryclean', image: 'dryclean.png' },
+  { id: 'colorrestore', image: 'colorrestore.png' },
+  { id: 'rafoo', image: 'rafoo.png' },
 ];
 
 const SVC_PATHS: Record<string, ReactNode> = {
@@ -74,7 +76,7 @@ const STATS = [
   { value: '12+', key: 0 },
   { value: '5', key: 1 },
   { value: '4.8/5', key: 2 },
-  { value: '24 hr', key: 3 },
+  { value: 'Wadi', key: 3 },
 ];
 
 const TESTIMONIALS = [
@@ -92,27 +94,17 @@ const PILLARS = [
 
 function HomePageContent() {
   const { t } = useI18n();
-  const [bookingCategory, setBookingCategory] = useState<string | undefined>(undefined);
+  const [bookingCategory, setBookingCategory] = useState<{ id: string; request: number }>();
   const [mapOpen, setMapOpen] = useState(false);
 
-  useEffect(() => {
-    if (!mapOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMapOpen(false);
-    };
-    document.addEventListener('keydown', onKey);
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prevOverflow;
-    };
-  }, [mapOpen]);
+  const mapRef = useRef<HTMLDivElement>(null);
+  useDialog(mapOpen, mapRef, () => setMapOpen(false));
 
   const categories = useMemo(
     () =>
       SERVICE_CATEGORIES.map((cat) => ({
         ...cat,
+        from: Math.min(...SERVICE_ITEMS.filter(item => item.main === cat.id).map(item => item.price)),
         label: t(`svc.${cat.id}.label`),
         desc: t(`svc.${cat.id}.desc`),
         covers: [0, 1, 2, 3].map((i) => t(`svc.${cat.id}.covers.${i}`)),
@@ -121,7 +113,7 @@ function HomePageContent() {
   );
 
   const stats = useMemo(
-    () => STATS.map((s) => ({ value: s.value, label: t(`stat.${s.key}.label`) })),
+    () => STATS.map((s) => ({ value: s.key === 3 ? t('flow.wadi') : s.value, label: t(`stat.${s.key}.label`) })),
     [t]
   );
 
@@ -147,15 +139,13 @@ function HomePageContent() {
   const closeMap = () => setMapOpen(false);
 
   const goToBooking = (catId: string) => {
-    setBookingCategory(catId);
-    document.getElementById('book')?.scrollIntoView({ behavior: 'smooth' });
+    setBookingCategory(current => ({ id: catId, request: (current?.request ?? 0) + 1 }));
+    scrollToSection('#book');
+    requestAnimationFrame(() => document.getElementById('booking-headline')?.focus({ preventScroll: true }));
   };
 
   return (
     <>
-      {/* Loading screen — shown until all frames are preloaded */}
-      <LoadingScreen />
-
       {/* Skip to content for accessibility */}
       <a href="#main-content" className="visually-hidden">{t('skip.main')}</a>
 
@@ -163,11 +153,11 @@ function HomePageContent() {
       <Navbar />
 
       <main id="main-content">
-        {/* ── SCROLL SEQUENCE ────────────────────────────────────────────── */}
+        {/* ── HERO ────────────────────────────────────────────── */}
         <SequenceCanvas />
 
         {/* ── SERVICES ───────────────────────────────────────────────────── */}
-        <section id="services" className="services-section scroll-reveal scroll-reveal--up" aria-labelledby="services-heading">
+        <section id="services" className="services-section" aria-labelledby="services-heading">
           <div className="section-head">
             <span className="pillars-label stagger-1" id="services-heading">{t('services.label')}</span>
             <h2 className="section-title stagger-2">{t('services.title')}</h2>
@@ -177,6 +167,7 @@ function HomePageContent() {
             {categories.map((cat, index) => (
               <CardFlip
                 key={cat.id}
+                category={cat.id}
                 title={cat.label}
                 subtitle={t('svc.from', { from: cat.from })}
                 description={cat.desc}
@@ -191,8 +182,10 @@ function HomePageContent() {
           </div>
         </section>
 
+        <BookingClient initialCategory={bookingCategory?.id} selectionRequest={bookingCategory?.request} />
+
         {/* ── TRUST — stats + testimonials ────────────────────────────────── */}
-        <section id="testimonials" className="trust-section scroll-reveal scroll-reveal--up" aria-labelledby="trust-heading">
+        <section id="testimonials" className="trust-section" aria-labelledby="trust-heading">
           <div className="trust-inner">
             <span className="pillars-label stagger-1" id="trust-heading">{t('trust.label')}</span>
 
@@ -219,7 +212,7 @@ function HomePageContent() {
         {/* ── PILLARS / WHY US ───────────────────────────────────────────── */}
         <section
           id="fabric-care"
-          className="pillars-section scroll-reveal scroll-reveal--up"
+          className="pillars-section"
           aria-labelledby="pillars-heading"
         >
           <span className="pillars-label stagger-1" id="pillars-heading">
@@ -239,7 +232,7 @@ function HomePageContent() {
         {/* ── CONTACT ─────────────────────────────────────────────────────── */}
         <section
           id="contact-us"
-          className="contact-section scroll-reveal scroll-reveal--up"
+          className="contact-section"
           aria-labelledby="contact-heading"
         >
           <div className="contact-intro">
@@ -250,7 +243,7 @@ function HomePageContent() {
           <div className="contact-grid">
             {[
               { label: t('contact.addressLabel'), content: t('contact.address') },
-              { label: t('contact.callLabel'), content: (<><a href="tel:+919876543210">+91 98765 43210</a><br />{t('contact.hoursShort')}</>) },
+              { label: t('contact.callLabel'), content: (<><a href="tel:+919876543210">+91 98765 43210</a><br />{t('contact.hoursFull')}</>) },
               { label: t('contact.emailLabel'), content: (<><a href="mailto:Rakesh@drycleaners.in">Rakesh@drycleaners.in</a><br />{t('contact.emailReply')}</>) },
               { label: t('contact.hoursLabel'), content: (<>{t('contact.hoursFull')}<br />{t('contact.hoursOpen')}</>) },
             ].map((card, index) => (
@@ -277,7 +270,7 @@ function HomePageContent() {
         </section>
 
         {/* ── BILLING / BOOKING ─────────────────────────────────────────── */}
-        <BookingClient initialCategory={bookingCategory} className="scroll-reveal scroll-reveal--up" />
+
       </main>
 
       {/* ── FOOTER ─────────────────────────────────────────────────────── */}
@@ -302,7 +295,7 @@ function HomePageContent() {
             if (e.target === e.currentTarget) closeMap();
           }}
         >
-          <div className="map-modal__box">
+          <div className="map-modal__box" ref={mapRef} tabIndex={-1}>
             <button
               type="button"
               className="map-modal__close"
@@ -329,6 +322,7 @@ function HomePageContent() {
                 width="600"
                 height="450"
                 style={{ border: 0 }}
+                tabIndex={-1}
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="strict-origin-when-cross-origin"

@@ -1,16 +1,19 @@
 # Rakesh Dry Cleaners
 
-A Next.js 14 landing and booking experience for Rakesh Dry Cleaners (Nagpur), featuring an immersive scroll-driven canvas sequence, service discovery, and a unified in-page booking flow that confirms orders via WhatsApp.
+A Next.js 14 landing and booking experience for Rakesh Dry Cleaners (Nagpur), featuring a warm editorial hero, service discovery, and an in-page booking flow that sends requests via WhatsApp.
 
 ## Features
 
-- **Loading screen** — covers the first paint until the hero frame set is preloaded.
-- **Scroll sequence** — a 300-frame canvas playback driven by scroll position, with dynamic copy beats. Respects `prefers-reduced-motion` and uses mobile-sized frames on small screens.
-- **Services** — cards for Wash, Wash & Iron, Dry Clean, Colour Restore, and Rafoo (mending), each with a Book-now action that preselects the matching booking tab.
-- **Booking** — category tabs + sub-category filters, item picker with quantity controls, date/time pills, optional pickup address and instructions, and a live order summary with estimated total. Confirming opens a pre-filled WhatsApp message.
+- **Hero** — immediate booking/pricing actions, an optimized opening image, and a progressively loaded 45-frame scroll animation. Reduced-motion visitors see the static image.
+- **Services** — responsive flip cards reveal included items and service terms on desktop hover or a 400 ms mobile press-and-hold. Moving away ends the hover preview; touch holds keep details open. Swiping cancels the hold, and click/tap buttons remain available. Booking stays visible on both faces; Back and Escape restore the front. Reduced-motion visitors get an instant face change.
+- **Guided booking** — Items → Pickup details → Review, with progress indicators, guarded navigation, and Back actions that preserve details. Catalog quantities persist locally; address, PIN, and instructions remain in memory only.
+- **Editable cart** — direct quantity entry, plus/minus controls, undo removal, and a focus-managed clear-cart confirmation. Quantities stay between 0 and 99.
+- **Wadi pickup** — home pickup requires an explicit Wadi locality, an allowed PIN, a successful area check, and an address. Changing the PIN/locality invalidates the check. Outside addresses can use shop drop-off.
+- **Service information** — listed per-item/set estimates, separate pickup-charge disclosure, turnaround and minimum-order information. Unknown business values are shown as “Confirmed by the shop.”
 - **Trust & contact** — stats, testimonials, fabric-care pillars, working hours, phone/email links, and a Google Maps embed modal.
-- **WhatsApp floating button** — always-available chat shortcut with a pulse animation.
-- **Multilingual** — full English / Marathi / Hindi UI with a language switcher in the navbar; preference persisted in `localStorage`.
+- **WhatsApp floating button** — chat shortcut outside booking; hidden during booking to keep controls unobstructed.
+- **Multilingual** — English / Marathi / Hindi UI, keyboard-operated language menu, and optional local preference storage.
+- **Navigation & motion** — section-aware mobile selection, consistent anchor offsets, reduced-motion support, short reveal transitions, and focus-managed mobile/menu map dialogs. Order summaries scroll with the page.
 
 ## Tech Stack
 
@@ -25,10 +28,14 @@ A Next.js 14 landing and booking experience for Rakesh Dry Cleaners (Nagpur), fe
 - `app/layout.tsx` — global metadata, `LanguageProvider`, and `WhatsAppButton`.
 - `app/error.tsx`, `app/not-found.tsx` — translated error screens.
 - `components/Navbar.tsx` — responsive navigation, scrollspy, language switcher, accessible mobile menu.
-- `components/SequenceCanvas.tsx` — preloads the frame set and renders the scroll-driven canvas sequence.
-- `components/LoadingScreen.tsx` — progress overlay driven by a `kdc:loadprogress` custom event.
-- `components/BookingClient.tsx` — booking tabs, item picker, scheduling, and WhatsApp summary.
-- `components/CardFlip.tsx`, `components/WhatsAppButton.tsx`, `components/LanguageSwitcher.tsx`.
+- `components/SequenceCanvas.tsx` — hero copy, opening image, and progressive canvas animation.
+- `components/BookingClient.tsx` — guided booking, Wadi eligibility, scheduling, cart recovery, and WhatsApp request.
+- `components/QuantityControl.tsx` — shared accessible direct-entry quantity controls.
+- `components/ServiceInformation.tsx` — common service terms.
+- `lib/booking-policy.ts` — Wadi PIN allowlist, maximum quantity, and configurable business charges/timing.
+- `app/redesign.css` — responsive visual refresh, service cards, and booking layout.
+- `components/CardFlip.tsx` — service cards with accessible details and booking actions.
+- `components/WhatsAppButton.tsx`, `components/LanguageSwitcher.tsx`.
 - `lib/i18n.tsx` — i18n provider/context (`useI18n`, `t()`).
 - `lib/translations.ts` — `en` / `mr` / `hi` dictionaries of namespaced keys.
 - `lib/service-data.ts` — categories, pricing items, time slots, and date helpers.
@@ -45,6 +52,13 @@ A Next.js 14 landing and booking experience for Rakesh Dry Cleaners (Nagpur), fe
 
 ## Notes
 
-- Booking data lives entirely in the browser; confirmation opens a WhatsApp chat with a generated order summary.
+- Booking data lives entirely in the browser; sending a request opens a WhatsApp chat with a generated order summary.
 - There is no backend and no order-tracking UI.
-- Frame preloading performance is dominated by `public/frames`; the loader falls back after a timeout.
+- WhatsApp handoff sends a request; availability and final pricing are confirmed by the shop.
+- The existing phone number, address, hours, reviews, and turnaround claims need business verification before public launch.
+
+## Pickup policy and business details
+
+`lib/booking-policy.ts` currently uses Wadi PIN **440023**, listed in the [government postal-office directory](https://rect.crpf.gov.in/Upload/Recruitment/ATTACHMENTS/29_1/1_2910216.pdf). The PIN also covers nearby localities, so the checker explicitly requires Wadi and rejects an outside-Wadi selection even with the same PIN. This is a customer-declared locality/PIN check, not geocoding or a server-side delivery guarantee; the shop confirms the exact address before accepting the request.
+
+Pickup charges, minimum order, and category turnaround hours remain unset until the business supplies confirmed values. Set them in `BOOKING_POLICY`; a null pickup charge must never be presented as free. Estimates disclose that pickup/extra charges are confirmed separately. Item prices remain the existing catalog values.

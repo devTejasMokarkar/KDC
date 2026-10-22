@@ -3,6 +3,7 @@ import { LanguageProvider } from '@/lib/i18n';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import ScrollInitializer from '@/components/ScrollInitializer';
 import './globals.css';
+import './redesign.css';
 
 export const metadata: Metadata = {
   title: 'Rakesh Dry Cleaners — Atelier-Grade Garment Care',

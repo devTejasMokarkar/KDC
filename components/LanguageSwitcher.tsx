@@ -8,21 +8,27 @@ export default function LanguageSwitcher() {
   const { locale, setLocale, t } = useI18n();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!open) return;
-    const onPointerDown = (e: MouseEvent) => {
+    rootRef.current?.querySelector<HTMLButtonElement>('[aria-selected="true"]')?.focus();
+    const onPointerDown = (e: PointerEvent) => {
       if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
         setOpen(false);
       }
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
     };
-    document.addEventListener('mousedown', onPointerDown);
+    document.addEventListener('pointerdown', onPointerDown);
     document.addEventListener('keydown', onKey);
     return () => {
-      document.removeEventListener('mousedown', onPointerDown);
+      document.removeEventListener('pointerdown', onPointerDown);
       document.removeEventListener('keydown', onKey);
     };
   }, [open]);
@@ -30,12 +36,16 @@ export default function LanguageSwitcher() {
   const select = (next: Locale) => {
     setLocale(next);
     setOpen(false);
+    triggerRef.current?.focus();
   };
 
   return (
-    <div className="lang-switcher" ref={rootRef}>
+    <div className="lang-switcher" ref={rootRef} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false); }}>
       <button
         type="button"
+        ref={triggerRef}
+        aria-controls={open ? "language-options" : undefined}
+        onKeyDown={event => { if (event.key === "ArrowDown" || event.key === "ArrowUp") { event.preventDefault(); setOpen(true); } }}
         className="lang-switcher__trigger"
         aria-label={t('lang.switch')}
         aria-haspopup="listbox"
@@ -60,12 +70,21 @@ export default function LanguageSwitcher() {
       </button>
 
       {open && (
-        <ul className="lang-switcher__menu" role="listbox" aria-label={t('lang.label')}>
+        <ul id="language-options" className="lang-switcher__menu" role="listbox" aria-label={t('lang.label')}>
           {LOCALES.map((code) => (
-            <li key={code}>
+            <li key={code} role="presentation">
               <button
                 type="button"
                 role="option"
+                tabIndex={locale === code ? 0 : -1}
+                onKeyDown={event => {
+                  const index = LOCALES.indexOf(code);
+                  const next = event.key === 'ArrowDown' ? (index + 1) % LOCALES.length : event.key === 'ArrowUp' ? (index + LOCALES.length - 1) % LOCALES.length : event.key === 'Home' ? 0 : event.key === 'End' ? LOCALES.length - 1 : null;
+                  if (next !== null) {
+                    event.preventDefault();
+                    rootRef.current?.querySelectorAll<HTMLButtonElement>('[role="option"]')[next]?.focus();
+                  }
+                }}
                 aria-selected={locale === code}
                 className={`lang-switcher__option${locale === code ? ' active' : ''}`}
                 onClick={() => select(code)}

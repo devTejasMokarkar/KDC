@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { scrollToSection } from '@/lib/navigation';
 import { initScrollReveal, initScrollProgress, initParallax } from '@/lib/scroll-animations';
 
 /**
@@ -9,10 +10,24 @@ import { initScrollReveal, initScrollProgress, initParallax } from '@/lib/scroll
  */
 export default function ScrollInitializer() {
   useEffect(() => {
+    // Ordinary in-page links use the same offsets and motion preference as menus.
+    const onAnchor = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const anchor = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[href^="#"]') : null;
+      if (!anchor || anchor.target === '_blank') return;
+      const href = anchor.getAttribute('href');
+      if (href && scrollToSection(href)) event.preventDefault();
+    };
+    document.addEventListener('click', onAnchor);
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const onMotion = () => {
+      if (motion.matches) document.querySelectorAll('.scroll-reveal').forEach(el => el.classList.add('is-visible'));
+    };
+    motion.addEventListener('change', onMotion);
     // Initialize scroll reveal animations
     const revealObserver = initScrollReveal({
-      rootMargin: '0px 0px -10% 0px',
-      threshold: 0.1,
+      rootMargin: '0px 0px -20px 0px',
+      threshold: 0,
       once: true,
     });
 
@@ -24,6 +39,8 @@ export default function ScrollInitializer() {
 
     // Cleanup on unmount
     return () => {
+      document.removeEventListener('click', onAnchor);
+      motion.removeEventListener('change', onMotion);
       revealObserver?.disconnect();
       progressCleanup?.();
       parallaxCleanup?.();
