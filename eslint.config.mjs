@@ -1,0 +1,9 @@
+import { defineConfig, globalIgnores } from 'eslint/config';
+import nextVitals from 'eslint-config-next/core-web-vitals';
+
+export default defineConfig([
+  ...nextVitals,
+  // Existing effects synchronize browser storage, focus, and booking selections.
+  { rules: { 'react-hooks/set-state-in-effect': 'off', 'react-hooks/refs': 'off' } },
+  globalIgnores(['.next/**', 'node_modules/**', 'next-env.d.ts', 'brand-kit/**']),
+]);

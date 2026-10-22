@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, renderHook, screen, fireEvent, act } from '@testing-library/react';
 import { LanguageProvider, useI18n } from '@/lib/i18n';
 import { LANG_NAMES, LOCALES, dictionaries, en, mr, hi } from '@/lib/translations';
 const STORAGE_KEY = 'kdc:lang';
@@ -56,29 +56,16 @@ describe('i18n provider', () => {
 
 describe('i18n fallback', () => {
   it('returns the English dictionary when no provider is present', () => {
-    let captured: ReturnType<typeof useI18n> | undefined;
-    function Reader() {
-      captured = useI18n();
-      return null;
-    }
-    render(<Reader />);
-    expect(captured?.locale).toBe('en');
-    expect(captured?.t('nav.services')).toBe('Services');
+    const { result } = renderHook(() => useI18n());
+    expect(result.current.locale).toBe('en');
+    expect(result.current.t('nav.services')).toBe('Services');
   });
 
   it('gracefully returns an empty string for unknown keys', () => {
-    let out = 'unset';
-    function Reader() {
-      const { t } = useI18n();
-      out = t('nonexistent.key');
-      return null;
-    }
-    render(
-      <LanguageProvider>
-        <Reader />
-      </LanguageProvider>
-    );
-    expect(out).toBe('');
+    const { result } = renderHook(() => useI18n(), {
+      wrapper: ({ children }) => <LanguageProvider>{children}</LanguageProvider>,
+    });
+    expect(result.current.t('nonexistent.key')).toBe('');
   });
 });
 

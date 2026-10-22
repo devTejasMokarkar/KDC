@@ -9,6 +9,7 @@ import { scrollToSection } from '@/lib/navigation';
 import { useDialog } from '@/lib/use-dialog';
 import QuantityControl from '@/components/QuantityControl';
 import ServiceInformation from '@/components/ServiceInformation';
+import { BUSINESS } from '@/lib/business';
 
 type Step = 0 | 1 | 2;
 type Quantities = Record<string, number>;
@@ -167,10 +168,10 @@ export default function BookingClient({ initialCategory, initialSubcategory, sel
     t('flow.extraChargesNote'), t('wa.thankYou'),
   ].filter(Boolean).join('\n');
   const handleSubmit = () => {
-    if (step !== 2 || !itemsValid || !detailsValid || !selectedDate || !selectedTime) return;
+    if (!BUSINESS.whatsappNumber || step !== 2 || !itemsValid || !detailsValid || !selectedDate || !selectedTime) return;
     const current = new Date();
     if (isSlotUnavailable(selectedDate, selectedTime, current)) { setNow(current); setStep(1); setAttemptedDetails(true); return; }
-    window.open(`https://wa.me/919876543210?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+    window.open(`https://wa.me/${BUSINESS.whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -213,14 +214,14 @@ export default function BookingClient({ initialCategory, initialSubcategory, sel
                 {area?.result === 'outside' && <button type="button" className="text-button" onClick={() => setMethod('dropoff')}>{t('flow.useDropoff')} →</button>}
                 {attemptedDetails && !areaValid && <p className="field-error">{t('flow.checkFirst')}</p>}
               </div>}
-              {method === 'pickup' && <div className="booking-row"><label className="label" htmlFor="booking-address">{t('booking.addressRequired')}</label><textarea id="booking-address" required autoComplete="street-address" value={pickupAddress} onChange={event => setPickupAddress(event.target.value)} placeholder={t('flow.addressPlaceholder')} aria-invalid={attemptedDetails && !addressValid} />{attemptedDetails && !addressValid && <p className="field-error">{t('flow.addressError')}</p>}</div>}
-              {method === 'dropoff' && <div className="dropoff-information"><strong>{t('flow.dropoffTitle')}</strong><p>{t('contact.address')}</p><p>{t('contact.hoursFull')}</p></div>}
+              {method === 'pickup' && <div className="booking-row"><label className="label" htmlFor="booking-address">{t('booking.addressRequired')}</label><textarea id="booking-address" required maxLength={500} autoComplete="street-address" value={pickupAddress} onChange={event => setPickupAddress(event.target.value)} placeholder={t('flow.addressPlaceholder')} aria-invalid={attemptedDetails && !addressValid} />{attemptedDetails && !addressValid && <p className="field-error">{t('flow.addressError')}</p>}</div>}
+              {method === 'dropoff' && <div className="dropoff-information"><strong>{t('flow.dropoffTitle')}</strong><p>{BUSINESS.address ?? t('launch.detailsPending')}</p><p>{BUSINESS.openingHours ?? t('launch.detailsPending')}</p></div>}
               <div className="booking-row"><span className="label" id="date-label">{t('booking.date')}</span><div className="date-grid" role="group" aria-labelledby="date-label">{Array.from({ length: 7 }, (_, index) => {
                 const date = new Date(now); date.setDate(date.getDate() + index); const value = toLocalDateString(date);
                 return <button key={value} id={index === 0 ? 'first-booking-date' : undefined} type="button" className={`date-pill${selectedDate === value ? ' active' : ''}`} aria-pressed={selectedDate === value} onClick={() => { setSelectedDate(value); if (selectedTime && isSlotUnavailable(value, selectedTime, now)) setSelectedTime(null); }}><span className="date-day">{index === 0 ? t('booking.today') : date.toLocaleDateString(locale, { weekday: 'short' })}</span><span className="date-num">{date.getDate()}</span></button>;
               })}</div>{attemptedDetails && !selectedDate && <p className="field-error">{t('flow.dateError')}</p>}</div>
               <div className="booking-row"><span className="label" id="time-label">{t('booking.time')}</span><div className="time-grid" role="group" aria-labelledby="time-label">{TIME_SLOTS.map((slot, index) => <button key={slot} id={index === 0 ? 'first-booking-time' : undefined} type="button" className={`time-pill${selectedTime === slot && validTime ? ' active' : ''}`} disabled={!selectedDate || isSlotUnavailable(selectedDate, slot, now)} aria-pressed={selectedTime === slot && validTime} onClick={() => setSelectedTime(slot)}>{slot}</button>)}</div>{!selectedDate && <p className="field-hint">{t('booking.chooseDate')}</p>}{selectedDate && TIME_SLOTS.every(slot => isSlotUnavailable(selectedDate, slot, now)) && <p className="field-error">{t('booking.noTimes')}</p>}{attemptedDetails && selectedDate && !validTime && <p className="field-error">{t('flow.timeError')}</p>}</div>
-              <div className="booking-row"><label className="label" htmlFor="booking-instructions">{t('booking.instructionsLabel')}</label><textarea id="booking-instructions" value={instructions} onChange={event => setInstructions(event.target.value)} placeholder={t('booking.instructionsPlaceholder')} /></div>
+              <div className="booking-row"><label className="label" htmlFor="booking-instructions">{t('booking.instructionsLabel')}</label><textarea id="booking-instructions" maxLength={1000} value={instructions} onChange={event => setInstructions(event.target.value)} placeholder={t('booking.instructionsPlaceholder')} /></div>
               <div className="flow-actions"><button type="button" className="btn-secondary" onClick={() => setStep(0)}>← {t('flow.back')}</button><button type="submit" className="btn-primary">{t('flow.nextReview')} →</button></div>
               {attemptedDetails && !detailsValid && <p className="field-error" role="alert">{t('flow.completeDetails')}</p>}
             </form>
@@ -237,7 +238,7 @@ export default function BookingClient({ initialCategory, initialSubcategory, sel
             {!count ? <p className="summary-empty">{t('booking.empty')}</p> : <ul className="editable-cart">{orderItems.map(item => <li key={item.id}><div className="editable-cart__heading"><div><span className="cart-service-label">{t(`svc.${item.main}.label`)}</span><p>{itemName(item.id)}</p><span className="cart-unit-price">₹{item.price} {t(`flow.unit.${priceUnitFor(item.id)}`)}</span></div><button type="button" className="cart-remove" aria-label={t('booking.ariaRemoveOrder', { name: itemName(item.id) })} onClick={() => setQuantity(item.id, 0)}>×</button></div><div className="editable-cart__bottom"><QuantityControl value={item.quantity} name={itemName(item.id)} summary onChange={value => setQuantity(item.id, value)} /><strong>₹{item.total}</strong></div></li>)}</ul>}
             <div className="flow-totals"><div><span>{t('flow.itemsSubtotal')}</span><strong>₹{subtotal}</strong></div><div><span>{t('flow.pickupCharge')}</span><strong>{feeLabel}</strong></div><div className="summary-total"><span>{t(fee === null ? 'flow.beforePickup' : 'flow.estimateTotal')}</span><strong>₹{estimate}</strong></div></div>
             {fee === null && <p className="request-note">{t('flow.unknownChargeNote')}</p>}
-            {step === 2 && <div className="summary-actions"><button type="button" className="btn-primary full-width" disabled={!itemsValid || !detailsValid} onClick={handleSubmit}>{t('booking.confirm')}</button><p className="request-note">{t('booking.requestNote')}</p><p className="request-reference">{t('flow.reference')}: {reference}</p>{!detailsValid && <button type="button" className="text-button" onClick={() => setStep(1)}>{t('flow.editDetails')}</button>}</div>}
+            {step === 2 && <div className="summary-actions">{!BUSINESS.whatsappNumber && <p className="field-error" role="status">{t('launch.bookingPending')}</p>}<button type="button" className="btn-primary full-width" disabled={!BUSINESS.whatsappNumber || !itemsValid || !detailsValid} onClick={handleSubmit}>{t('booking.confirm')}</button><p className="request-note">{t('booking.requestNote')}</p><p className="request-reference">{t('flow.reference')}: {reference}</p>{!detailsValid && <button type="button" className="text-button" onClick={() => setStep(1)}>{t('flow.editDetails')}</button>}</div>}
             {step < 2 && <p className="request-note">{t('flow.cartHint')}</p>}
           </div>
         </aside>

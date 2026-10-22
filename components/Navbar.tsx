@@ -5,6 +5,7 @@ import { scrollToSection } from '@/lib/navigation';
 import { useDialog } from '@/lib/use-dialog';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useI18n } from '@/lib/i18n';
+import { BUSINESS } from '@/lib/business';
 
 type NavLink = { href: string; labelKey: string };
 
@@ -37,7 +38,7 @@ const MOBILE_NAV_LINKS: { href: string; icon: React.ReactNode }[] = [
     ),
   },
   {
-    href: 'tel:+919876543210',
+    href: BUSINESS.phoneE164 ? `tel:${BUSINESS.phoneE164}` : '#contact-us',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -128,7 +129,7 @@ export default function Navbar() {
     }
     if (scrollToSection(href === '#main-content' ? '#the-process' : href)) return;
     // Section not on the current page — route to the homepage section anchor.
-    window.location.href = `/${href}`;
+    window.location.href = new URL(`/${href}`, window.location.origin).href;
   }, []);
 
   return (
@@ -185,7 +186,7 @@ export default function Navbar() {
         {/* Mobile bottom actions */}
         <div className="mobile-actions" aria-label={t('nav.mobileAria')}>
           <div className="mobile-actions-grid">
-            {MOBILE_NAV_LINKS.map((link) => (
+            {MOBILE_NAV_LINKS.filter((link, index) => index !== 2 || !!BUSINESS.phoneE164).map((link) => (
               <a
                 key={link.href}
                 href={link.href}

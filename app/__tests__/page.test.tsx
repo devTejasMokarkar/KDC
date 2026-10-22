@@ -2,11 +2,18 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import HomePage from '@/app/page';
+import { BUSINESS } from '@/lib/business';
+
+vi.mock('@/lib/business', async importOriginal => ({
+  ...await importOriginal<typeof import('@/lib/business')>(),
+  BUSINESS: { phoneE164: null, whatsappNumber: null, email: null, address: null, openingHours: null, mapsUrl: null, mapsEmbedUrl: null },
+}));
 
 const location = window.location as { href: string };
 
 describe('HomePage', () => {
   beforeEach(() => {
+    BUSINESS.mapsUrl = null; BUSINESS.mapsEmbedUrl = null;
     location.href = 'http://localhost/';
     vi.clearAllMocks();
     window.localStorage.clear();
@@ -69,13 +76,17 @@ describe('HomePage', () => {
     expect(screen.getByRole('tab', { name: 'Tops & Shirts' })).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('renders contact links and actions', () => {
+  it('does not display sample contacts, reviews, or an unconfigured map', () => {
     render(<HomePage />);
-    expect(screen.getByRole('link', { name: /Open in Google Maps/ })).toHaveAttribute(
-      'href',
-      expect.stringContaining('maps.google.com')
-    );
+    expect(screen.queryByText(/98765 43210/)).not.toBeInTheDocument();
+    expect(screen.queryByText('4.8/5')).not.toBeInTheDocument();
+    expect(screen.queryByText('12+')).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /Open in Google Maps/ })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'View Map' })).toBeDisabled();
+    expect(document.querySelector('a[href^="tel:"]')).toBeNull();
+    expect(document.querySelector('a[href^="https://wa.me/"]')).toBeNull();
   });
+
   it('reselects the same service card after booking tabs were changed manually', async () => {
     const user = userEvent.setup();
     render(<HomePage />);
@@ -86,6 +97,8 @@ describe('HomePage', () => {
   });
 
   it('focuses and closes the map dialog and restores the view-map button', async () => {
+    BUSINESS.mapsUrl = 'https://maps.google.com/?q=Test+shop';
+    BUSINESS.mapsEmbedUrl = 'https://www.google.com/maps/embed?pb=test';
     const user = userEvent.setup();
     render(<HomePage />);
     const trigger = screen.getByRole('button', { name: 'View Map' });

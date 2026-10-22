@@ -3,7 +3,7 @@
 import { useEffect, useRef, type RefObject } from 'react';
 
 /** Lock the background and keep keyboard focus within an open modal. */
-export function useDialog(open: boolean, ref: RefObject<HTMLElement>, onClose: () => void) {
+export function useDialog(open: boolean, ref: RefObject<HTMLElement | null>, onClose: () => void) {
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
 

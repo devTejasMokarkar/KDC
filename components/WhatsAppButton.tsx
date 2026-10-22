@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useI18n } from '@/lib/i18n';
 
-const WHATSAPP_NUMBER = '919876543210';
+import { BUSINESS } from '@/lib/business';
 
 export default function WhatsAppButton() {
   const { t } = useI18n();
@@ -16,7 +16,9 @@ export default function WhatsAppButton() {
     return () => observer.disconnect();
   }, []);
 
-  const href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  if (!BUSINESS.whatsappNumber) return null;
+
+  const href = `https://wa.me/${BUSINESS.whatsappNumber}?text=${encodeURIComponent(
     t('wa.defaultMessage')
   )}`;
 

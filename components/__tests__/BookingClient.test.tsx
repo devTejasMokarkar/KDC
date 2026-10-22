@@ -2,6 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import BookingClient from '@/components/BookingClient';
+import { BUSINESS } from '@/lib/business';
+
+vi.mock('@/lib/business', async importOriginal => ({
+  ...await importOriginal<typeof import('@/lib/business')>(),
+  BUSINESS: { whatsappNumber: '919000000001', address: 'Test shop address', openingHours: 'Test hours' },
+}));
 
 const openSpy = vi.fn();
 type User = ReturnType<typeof userEvent.setup>;
@@ -33,6 +39,7 @@ async function finishDropoff(user: User) {
 
 describe('guided booking', () => {
   beforeEach(() => {
+    BUSINESS.whatsappNumber = '919000000001';
     openSpy.mockClear();
     window.localStorage.clear();
     Object.defineProperty(window, 'open', { configurable: true, writable: true, value: openSpy });
@@ -210,6 +217,18 @@ describe('guided booking', () => {
     expect(currentStep()).toHaveTextContent('Items');
     await user.click(screen.getByRole('button', { name: 'Undo' }));
     expect(screen.getByRole('button', { name: /Review/ })).toBeEnabled();
+  });
+
+  it('never opens WhatsApp when the shop contact is not configured', async () => {
+    BUSINESS.whatsappNumber = null;
+    const user = userEvent.setup();
+    render(<BookingClient />);
+    await addShirt(user); await finishDropoff(user);
+    const send = screen.getByRole('button', { name: 'Send request on WhatsApp' });
+    expect(send).toBeDisabled();
+    await user.click(send);
+    expect(openSpy).not.toHaveBeenCalled();
+    expect(screen.getByText(/Online requests are not open yet/)).toBeInTheDocument();
   });
 
   it('does not reset an available time when the selected date is clicked again', async () => {

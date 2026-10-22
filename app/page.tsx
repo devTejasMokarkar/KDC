@@ -3,6 +3,7 @@
 import { useMemo, useState, useRef } from 'react';
 import type { ReactNode } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import SequenceCanvas from '@/components/SequenceCanvas';
 import BookingClient from '@/components/BookingClient';
@@ -11,6 +12,7 @@ import { useI18n } from '@/lib/i18n';
 import { scrollToSection } from '@/lib/navigation';
 import { useDialog } from '@/lib/use-dialog';
 import { SERVICE_ITEMS } from '@/lib/service-data';
+import { BUSINESS } from '@/lib/business';
 
 /* ==================================================================
    SERVICE CATALOG — main categories (localised at render time)
@@ -75,19 +77,6 @@ const svcIcon = (id: string) => (
 /* ==================================================================
    TRUST — stats + testimonials
 ================================================================== */
-const STATS = [
-  { value: '12+', key: 0 },
-  { value: '5', key: 1 },
-  { value: '4.8/5', key: 2 },
-  { value: 'Wadi', key: 3 },
-];
-
-const TESTIMONIALS = [
-  { key: 0, who: 'Anita M.' },
-  { key: 1, who: 'Vikram S.' },
-  { key: 2, who: 'Priya D.' },
-];
-
 const PILLARS = [
   { num: '01', key: 0 },
   { num: '02', key: 1 },
@@ -115,19 +104,11 @@ function HomePageContent() {
     [t]
   );
 
-  const stats = useMemo(
-    () => STATS.map((s) => ({ value: s.key === 3 ? t('flow.wadi') : s.key === 1 ? String(SERVICE_CATEGORIES.length) : s.value, label: t(`stat.${s.key}.label`) })),
-    [t]
-  );
-
-  const testimonials = useMemo(
-    () =>
-      TESTIMONIALS.map((item) => ({
-        quote: t(`testi.${item.key}.quote`),
-        who: item.who,
-      })),
-    [t]
-  );
+  const stats = [
+    { value: String(SERVICE_CATEGORIES.length), label: t('stat.1.label') },
+    { value: '3', label: t('launch.bookingSteps') },
+    { value: t('flow.wadi'), label: t('stat.3.label') },
+  ];
 
   const pillars = useMemo(
     () =>
@@ -201,14 +182,6 @@ function HomePageContent() {
               ))}
             </div>
 
-            <div className="testimonial-grid">
-              {testimonials.map((item, index) => (
-                <figure className={`testimonial scroll-reveal scroll-reveal--up stagger-${(index % 6) + 1}`} key={item.who}>
-                  <blockquote>{item.quote}</blockquote>
-                  <figcaption>— {item.who}</figcaption>
-                </figure>
-              ))}
-            </div>
           </div>
         </section>
 
@@ -269,10 +242,10 @@ function HomePageContent() {
 
           <div className="contact-grid">
             {[
-              { label: t('contact.addressLabel'), content: t('contact.address') },
-              { label: t('contact.callLabel'), content: (<><a href="tel:+919876543210">+91 98765 43210</a><br />{t('contact.hoursFull')}</>) },
-              { label: t('contact.emailLabel'), content: (<><a href="mailto:Rakesh@drycleaners.in">Rakesh@drycleaners.in</a><br />{t('contact.emailReply')}</>) },
-              { label: t('contact.hoursLabel'), content: (<>{t('contact.hoursFull')}<br />{t('contact.hoursOpen')}</>) },
+              { label: t('contact.addressLabel'), content: BUSINESS.address ?? t('launch.detailsPending') },
+              { label: t('contact.callLabel'), content: BUSINESS.phoneE164 ? <a href={`tel:${BUSINESS.phoneE164}`}>{BUSINESS.phoneE164}</a> : t('launch.detailsPending') },
+              ...(BUSINESS.email ? [{ label: t('contact.emailLabel'), content: <a href={`mailto:${BUSINESS.email}`}>{BUSINESS.email}</a> }] : []),
+              { label: t('contact.hoursLabel'), content: BUSINESS.openingHours ?? t('launch.detailsPending') },
             ].map((card, index) => (
               <div className={`contact-card scroll-reveal scroll-reveal--up stagger-${(index % 6) + 1}`} key={index}>
                 <p className="contact-card__label">{card.label}</p>
@@ -282,17 +255,18 @@ function HomePageContent() {
           </div>
 
           <div className="contact-actions">
-            <a
-              href="https://maps.google.com/?q=Wadi+Nagpur"
+            {BUSINESS.mapsUrl && <a
+              href={BUSINESS.mapsUrl}
               target="_blank"
               rel="noreferrer"
               className="btn-secondary scroll-reveal scroll-reveal--up stagger-1"
             >
               {t('contact.openMaps')}
-            </a>
-            <button type="button" className="btn-secondary scroll-reveal scroll-reveal--up stagger-2" onClick={() => setMapOpen(true)}>
+            </a>}
+            <button type="button" disabled={!BUSINESS.mapsEmbedUrl} className="btn-secondary scroll-reveal scroll-reveal--up stagger-2" onClick={() => setMapOpen(true)}>
               {t('contact.viewMap')}
             </button>
+            {!BUSINESS.mapsUrl && <p className="request-note">{t('launch.mapPending')}</p>}
           </div>
         </section>
 
@@ -307,12 +281,13 @@ function HomePageContent() {
           <li><a href="#services">{t('footer.services')}</a></li>
           <li><a href="#fabric-care">{t('footer.fabricCare')}</a></li>
           <li><a href="#book">{t('footer.billing')}</a></li>
+          <li><Link href="/privacy">{t('launch.privacy')}</Link></li>
         </ul>
         <p className="footer__copy">© {new Date().getFullYear()} Rakesh Dry Cleaners. {t('footer.rights')}</p>
       </footer>
 
       {/* ── MAP MODAL ─────────────────────────────────────────────────────── */}
-      {mapOpen && (
+      {mapOpen && BUSINESS.mapsEmbedUrl && (
         <div
           className="map-modal"
           role="dialog"
@@ -344,7 +319,7 @@ function HomePageContent() {
             <h3 id="map-modal-title" className="map-modal__title">{t('map.title')}</h3>
             <div className="map-modal__frame">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29769.307744750357!2d78.96976039715346!3d21.145891904081097!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bd4eaeeafe449ed%3A0x7943956b036050a2!2sWadi%2C%20Nagpur%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1785674386355!5m2!1sen!2sin"
+                src={BUSINESS.mapsEmbedUrl}
                 title="Google Maps — Wadi, Nagpur"
                 width="600"
                 height="450"

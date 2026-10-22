@@ -21,6 +21,38 @@ export const DOC_TITLES: Record<Locale, string> = {
 };
 
 export const en: Record<string, string> = {
+  "privacy.back": "Back to the website",
+
+  "privacy.control": "You can clear your cart using Clear cart, remove saved language and item preferences through your browser’s site-data settings, and close the page to discard unsent pickup details. Contact the shop through its verified contact details about information you have sent in WhatsApp.",
+
+  "privacy.controlTitle": "Your choices",
+
+  "privacy.providers": "The website loads fonts from Google Fonts. If a shop map is configured and you open it, Google Maps loads. These providers receive connection information such as your IP address. Your hosting provider may also retain request logs.",
+
+  "privacy.providersTitle": "External services",
+
+  "privacy.whatsapp": "When you choose Send request on WhatsApp, the selected items and booking details are included in a WhatsApp link. Review the message and send it in WhatsApp. Opening the chat does not confirm a booking; the shop must confirm it. WhatsApp handles information under its own privacy terms.",
+
+  "privacy.whatsappTitle": "Sending a request",
+
+  "privacy.storage": "Your selected items and language preference are saved in your browser. Pickup address, PIN, instructions and appointment preferences stay in the current page session. The website has no order database.",
+
+  "privacy.storageTitle": "Information on your device",
+
+  "privacy.intro": "This page explains how this website currently handles your booking information.",
+
+  "privacy.title": "Privacy & booking data",
+
+  "launch.privacy": "Privacy & booking data",
+
+  "launch.bookingPending": "Online requests are not open yet. The shop’s WhatsApp contact is being confirmed.",
+
+  "launch.mapPending": "The exact shop location will be added before bookings open.",
+
+  "launch.detailsPending": "Shop details will be added before bookings open.",
+
+  "launch.bookingSteps": "Booking steps",
+
   "flow.beforePickup": "Estimate before pickup fee",
   "card.showDetails": "See details for {name}",
   "card.hideDetails": "Back to {name}",
@@ -170,7 +202,7 @@ export const en: Record<string, string> = {
   'services.sub':
     'From daily wear to delicate ethnic fabrics, upholstery and mending — pick a category to see pricing and book.',
 
-  'trust.label': 'Trusted by the customers',
+  "trust.label": "Local care, clear choices",
   'skip.main': 'Skip to main content',
 
   "svc.bedding.label": "Home & Bedding",
@@ -216,16 +248,9 @@ export const en: Record<string, string> = {
   'svc.rafoo.covers.2': 'Sarees and sherwanis',
   'svc.rafoo.covers.3': 'Sofa covers and school dress',
 
-  'stat.0.label': 'Years serving the customers',
   'stat.1.label': 'Care categories',
-  'stat.2.label': 'Average customer rating',
   'stat.3.label': 'Pickup area',
 
-  'testi.0.quote':
-    "My sherwani came back looking brand new before my brother's wedding. Genuinely careful work.",
-  'testi.1.quote': "Pickup is right on time every week. I don't think about laundry anymore.",
-  'testi.2.quote':
-    'Got a rafoo job done on an old saree I thought was unwearable. Impressive.',
 
   "care.label": "How we care for your laundry",
   "care.title": "The right wash for every load.",
@@ -242,27 +267,20 @@ export const en: Record<string, string> = {
   'pillar.0.title': 'Hand Washing',
   'pillar.0.desc':
     'Everyday clothes are washed carefully by hand, with attention to the fabric and finish. Heavy items such as blankets are cleaned using professional industrial machines.',
-  'pillar.1.title': 'Natural Sun Drying',
-  'pillar.1.desc':
-    "Clothes are dried in the open sun, the old-fashioned way — leaving them fresh, soft, and kind to delicate fabrics.",
+  "pillar.1.title": "Care for Heavy Items",
+  "pillar.1.desc": "Professional industrial machines are used for heavy items such as blankets.",
   'pillar.2.title': 'Steam & Electric Ironing',
   'pillar.2.desc':
     "Finished with hand steam irons and electric irons — sharp creases and a crisp press without flattening the fabric.",
-  'pillar.3.title': 'Revival for Professionals',
-  'pillar.3.desc':
-    'We also revive clothes for working professionals — restoring freshness, colour and form to the uniforms and tailoring you wear every day.',
+  "pillar.3.title": "Everyday & Occasion Wear",
+  "pillar.3.desc": "Choose care for everyday clothes, formal wear and traditional garments from our service catalog.",
 
   'contact.label': 'Contact Us',
   'contact.title': "Come Visit. We're Right Here.",
   'contact.addressLabel': 'Address',
-  'contact.address': 'Shop No. 12, Main Road Near Station, Wadi, Nagpur',
   'contact.callLabel': 'Call / WhatsApp',
-  'contact.hoursShort': 'Mon – Sat, 8 AM – 8 PM',
   'contact.emailLabel': 'Email',
-  'contact.emailReply': 'We reply within 24 hours',
   'contact.hoursLabel': 'Working Hours',
-  'contact.hoursFull': 'Mon – Sun: 7 AM – 9 PM',
-  'contact.hoursOpen': 'Open all 7 days including holidays',
   'contact.openMaps': 'Open in Google Maps →',
   'contact.viewMap': 'View Map',
 
@@ -410,6 +428,38 @@ export const en: Record<string, string> = {
 };
 
 export const mr: Record<string, string> = {
+  "privacy.back": "वेबसाइटवर परत जा",
+
+  "privacy.control": "कार्ट साफ करा वापरून वस्तू काढा. भाषा व वस्तूंची जतन केलेली माहिती ब्राउझरच्या साइट डेटा सेटिंग्जमधून काढता येते. न पाठवलेले पिकअप तपशील काढण्यासाठी पेज बंद करा. WhatsApp वर पाठवलेल्या माहितीसाठी दुकानाच्या पडताळलेल्या संपर्कावर संपर्क करा.",
+
+  "privacy.controlTitle": "तुमचे पर्याय",
+
+  "privacy.providers": "वेबसाइट Google Fonts वरून फॉन्ट लोड करते. दुकानाचा नकाशा उपलब्ध असल्यास तो उघडल्यावर Google Maps लोड होते. या सेवांना IP पत्त्यासारखी कनेक्शन माहिती मिळते. होस्टिंग सेवा विनंती नोंदी ठेवू शकते.",
+
+  "privacy.providersTitle": "बाह्य सेवा",
+
+  "privacy.whatsapp": "WhatsApp वर विनंती पाठवा निवडल्यावर वस्तू आणि बुकिंग तपशील WhatsApp लिंकमध्ये जातात. संदेश तपासून WhatsApp मध्ये पाठवा. चॅट उघडल्याने बुकिंग निश्चित होत नाही; दुकानाची पुष्टी आवश्यक आहे. WhatsApp माहिती स्वतःच्या गोपनीयता अटींनुसार हाताळते.",
+
+  "privacy.whatsappTitle": "विनंती पाठवताना",
+
+  "privacy.storage": "निवडलेल्या वस्तू आणि भाषा ब्राउझरमध्ये जतन होतात. पिकअप पत्ता, पिन, सूचना आणि वेळेची पसंती चालू पेज सत्रातच राहतात. वेबसाइटवर ऑर्डर डेटाबेस नाही.",
+
+  "privacy.storageTitle": "तुमच्या डिव्हाइसवरील माहिती",
+
+  "privacy.intro": "ही वेबसाइट सध्या तुमची बुकिंग माहिती कशी हाताळते ते येथे दिले आहे.",
+
+  "privacy.title": "गोपनीयता आणि बुकिंग माहिती",
+
+  "launch.privacy": "गोपनीयता आणि बुकिंग माहिती",
+
+  "launch.bookingPending": "ऑनलाइन विनंत्या अद्याप सुरू नाहीत. दुकानाचा WhatsApp संपर्क निश्चित केला जात आहे.",
+
+  "launch.mapPending": "बुकिंग सुरू होण्यापूर्वी दुकानाचे अचूक स्थान जोडले जाईल.",
+
+  "launch.detailsPending": "बुकिंग सुरू होण्यापूर्वी दुकानाचे तपशील जोडले जातील.",
+
+  "launch.bookingSteps": "बुकिंगचे टप्पे",
+
   "flow.beforePickup": "पिकअप शुल्कापूर्वीचा अंदाज",
   "card.showDetails": "{name} चे तपशील पाहा",
   "card.hideDetails": "{name} कडे परत",
@@ -559,7 +609,7 @@ export const mr: Record<string, string> = {
   'services.sub':
     'दैनंदिन वेशापासून नाजूक एथनिक फॅब्रिक, असबाब आणि दुरुस्तीपर्यंत — किंमत पाहण्यासाठी आणि बुक करण्यासाठी एक श्रेणी निवडा.',
 
-  'trust.label': 'ग्राहकांनी केलेला विश्वास',
+  "trust.label": "स्थानिक निगा, स्पष्ट पर्याय",
   'skip.main': 'मुख्य सामग्रीकडे जा',
 
   "svc.bedding.label": "घरगुती वस्त्र व बेडिंग",
@@ -605,16 +655,9 @@ export const mr: Record<string, string> = {
   'svc.rafoo.covers.2': 'साड्या आणि शेरवानी',
   'svc.rafoo.covers.3': 'सोफा कव्हर आणि शाळेचा गणवेश',
 
-  'stat.0.label': 'वर्षे ग्राहकांची सेवा',
   'stat.1.label': 'काळजी श्रेणी',
-  'stat.2.label': 'सरासरी ग्राहक रेटिंग',
   'stat.3.label': 'पिकअप परिसर',
 
-  'testi.0.quote':
-    'माझ्या भावाच्या लग्नाआधी माझी शेरवानी एकदम नवी दिसेल अशी परत आली. खरोखर काळजीपूर्ण काम.',
-  'testi.1.quote': 'दर आठवड्याला पिकअप वेळेवर येतो. आता मला धुण्याचा विचार करावा लागत नाही.',
-  'testi.2.quote':
-    'एक जुनी साडी जी नक्कीच वापरता येणार नाही असे वाटले होते, तिच्यावर रफू करून घेतली. प्रभावी.',
 
   "care.label": "आम्ही तुमच्या कपड्यांची निगा कशी राखतो",
   "care.title": "प्रत्येक कपड्यासाठी योग्य धुलाई.",
@@ -631,27 +674,20 @@ export const mr: Record<string, string> = {
   'pillar.0.title': 'हाताने धुणे',
   'pillar.0.desc':
     'रोजचे कपडे कापड आणि फिनिशकडे लक्ष देऊन हाताने धुतले जातात. ब्लँकेटसारख्या जड वस्तूंसाठी व्यावसायिक औद्योगिक मशीन वापरतो.',
-  'pillar.1.title': 'नैसर्गिक सूर्यप्रकाशात वाळवणे',
-  'pillar.1.desc':
-    'कपडे उघड्या सूर्यप्रकाशात, जुन्या पद्धतीने वाळवले जातात — ताजे, मऊ आणि नाजूक फॅब्रिकसाठी योग्य.',
+  "pillar.1.title": "जड वस्तूंची निगा",
+  "pillar.1.desc": "ब्लँकेटसारख्या जड वस्तूंसाठी व्यावसायिक औद्योगिक मशीन वापरली जातात.",
   'pillar.2.title': 'स्टीम आणि इलेक्ट्रिक इस्त्री',
   'pillar.2.desc':
     'हाताच्या स्टीम इस्त्री आणि इलेक्ट्रिक इस्त्रीने शेवट — फॅब्रिक सपाट न करता धारदार घड्या आणि चकाचक इस्त्री.',
-  'pillar.3.title': 'व्यावसायिकांसाठी पुनरुज्जीवन',
-  'pillar.3.desc':
-    'आम्ही काम करणाऱ्या व्यावसायिकांसाठी कपडेही पुनरुज्जीवित करतो — रोजच्या गणवेश आणि शिवणकामाच्या कपड्यांना ताजेपणा, रंग आणि आकार परत आणतो.',
+  "pillar.3.title": "रोजचे आणि खास प्रसंगांचे कपडे",
+  "pillar.3.desc": "आमच्या सेवा यादीतून रोजच्या, औपचारिक आणि पारंपरिक कपड्यांसाठी निगा निवडा.",
 
   'contact.label': 'संपर्क करा',
   'contact.title': 'भेट द्या. आम्ही इथेच आहोत.',
   'contact.addressLabel': 'पत्ता',
-  'contact.address': 'दुकान क्र. १२, मुख्य रस्ता स्टेशनजवळ, वाडी, नागपूर',
   'contact.callLabel': 'कॉल / व्हॉट्सअॅप',
-  'contact.hoursShort': 'सोम – शनि, सकाळी ८ – रात्री ८',
   'contact.emailLabel': 'ईमेल',
-  'contact.emailReply': 'आम्ही २४ तासांत उत्तर देतो',
   'contact.hoursLabel': 'कामाचे तास',
-  'contact.hoursFull': 'सोम – रवि: सकाळी ७ – रात्री ९',
-  'contact.hoursOpen': 'सुट्ट्यांसह सर्व ७ दिवस खुले',
   'contact.openMaps': 'Google Maps मध्ये उघडा →',
   'contact.viewMap': 'नकाशा पहा',
 
@@ -798,6 +834,38 @@ export const mr: Record<string, string> = {
 };
 
 export const hi: Record<string, string> = {
+  "privacy.back": "वेबसाइट पर वापस जाएँ",
+
+  "privacy.control": "कार्ट साफ करें से वस्तुएँ हटाएँ। सहेजी गई भाषा और वस्तुओं को ब्राउज़र की साइट डेटा सेटिंग से हटाया जा सकता है। न भेजे गए पिकअप विवरण हटाने के लिए पेज बंद करें। WhatsApp में भेजी जानकारी के बारे में दुकान के सत्यापित संपर्क पर संपर्क करें।",
+
+  "privacy.controlTitle": "आपके विकल्प",
+
+  "privacy.providers": "वेबसाइट Google Fonts से फ़ॉन्ट लोड करती है। दुकान का मानचित्र उपलब्ध होने पर उसे खोलने से Google Maps लोड होता है। इन सेवाओं को IP पते जैसी कनेक्शन जानकारी मिलती है। होस्टिंग सेवा अनुरोध लॉग भी रख सकती है।",
+
+  "privacy.providersTitle": "बाहरी सेवाएँ",
+
+  "privacy.whatsapp": "WhatsApp पर अनुरोध भेजें चुनने पर वस्तुएँ और बुकिंग विवरण WhatsApp लिंक में शामिल होते हैं। संदेश जाँचकर WhatsApp में भेजें। चैट खोलने से बुकिंग की पुष्टि नहीं होती; दुकान की पुष्टि आवश्यक है। WhatsApp जानकारी अपनी गोपनीयता शर्तों के अनुसार संभालता है।",
+
+  "privacy.whatsappTitle": "अनुरोध भेजना",
+
+  "privacy.storage": "चुनी गई वस्तुएँ और भाषा ब्राउज़र में सहेजी जाती हैं। पिकअप पता, पिन, निर्देश और समय की पसंद वर्तमान पेज सत्र में ही रहते हैं। वेबसाइट पर ऑर्डर डेटाबेस नहीं है।",
+
+  "privacy.storageTitle": "आपके डिवाइस पर जानकारी",
+
+  "privacy.intro": "यह पेज बताता है कि यह वेबसाइट वर्तमान में आपकी बुकिंग जानकारी कैसे संभालती है।",
+
+  "privacy.title": "गोपनीयता और बुकिंग जानकारी",
+
+  "launch.privacy": "गोपनीयता और बुकिंग जानकारी",
+
+  "launch.bookingPending": "ऑनलाइन अनुरोध अभी शुरू नहीं हुए हैं। दुकान का WhatsApp संपर्क पुष्टि किया जा रहा है।",
+
+  "launch.mapPending": "बुकिंग शुरू होने से पहले दुकान का सही स्थान जोड़ा जाएगा।",
+
+  "launch.detailsPending": "बुकिंग शुरू होने से पहले दुकान के विवरण जोड़े जाएंगे।",
+
+  "launch.bookingSteps": "बुकिंग के चरण",
+
   "flow.beforePickup": "पिकअप शुल्क से पहले का अनुमान",
   "card.showDetails": "{name} का विवरण देखें",
   "card.hideDetails": "{name} पर वापस",
@@ -947,7 +1015,7 @@ export const hi: Record<string, string> = {
   'services.sub':
     'रोज़ पहनने से लेकर नाज़ुक एथनिक फैब्रिक, असबाब और मरम्मत तक — कीमत देखने और बुक करने के लिए एक श्रेणी चुनें।',
 
-  'trust.label': 'ग्राहकों का भरोसा',
+  "trust.label": "स्थानीय देखभाल, स्पष्ट विकल्प",
   'skip.main': 'मुख्य सामग्री पर जाएँ',
 
   "svc.bedding.label": "घरेलू वस्त्र और बिस्तर",
@@ -993,16 +1061,9 @@ export const hi: Record<string, string> = {
   'svc.rafoo.covers.2': 'साड़ियाँ और शेरवानी',
   'svc.rafoo.covers.3': 'सोफा कवर और स्कूल ड्रेस',
 
-  'stat.0.label': 'वर्षों से ग्राहकों की सेवा',
   'stat.1.label': 'केयर श्रेणियाँ',
-  'stat.2.label': 'औसत ग्राहक रेटिंग',
   'stat.3.label': 'पिकअप क्षेत्र',
 
-  'testi.0.quote':
-    'मेरे भाई की शादी से पहले मेरी शेरवानी बिल्कुल नई दिखती हुई लौटी। सच में सावधानी से किया गया काम।',
-  'testi.1.quote': 'हर हफ्ते पिकअप समय पर आता है। अब मुझे धुलाई की चिंता नहीं रहती।',
-  'testi.2.quote':
-    'एक पुरानी साड़ी जिसे मैं बेकार समझता था, उस पर रफू करवाई। प्रभावशाली।',
 
   "care.label": "हम आपके कपड़ों की देखभाल कैसे करते हैं",
   "care.title": "हर कपड़े के लिए सही धुलाई।",
@@ -1019,27 +1080,20 @@ export const hi: Record<string, string> = {
   'pillar.0.title': 'हाथों से धुलाई',
   'pillar.0.desc':
     'रोज़मर्रा के कपड़े हाथों से धोए जाते हैं, कपड़े और फिनिश पर ध्यान देते हुए। कंबल जैसी भारी वस्तुओं के लिए पेशेवर औद्योगिक मशीनों का उपयोग करते हैं।',
-  'pillar.1.title': 'प्राकृतिक धूप में सुखाना',
-  'pillar.1.desc':
-    'कपड़े खुली धूप में, पुराने तरीके से सुखाए जाते हैं — ताज़े, मुलायम और नाज़ुक फैब्रिक के लिए कोमल।',
+  "pillar.1.title": "भारी वस्तुओं की देखभाल",
+  "pillar.1.desc": "कंबल जैसी भारी वस्तुओं के लिए पेशेवर औद्योगिक मशीनों का उपयोग किया जाता है।",
   'pillar.2.title': 'स्टीम और इलेक्ट्रिक इस्त्री',
   'pillar.2.desc':
     'हैंड स्टीम और इलेक्ट्रिक इस्त्री से फिनिश — फैब्रिक सपाट किए बिना तेज़ क्रीज़ और साफ़ प्रेस।',
-  'pillar.3.title': 'पेशेवरों के लिए पुनरुज्जीवन',
-  'pillar.3.desc':
-    'हम कामकाजी पेशेवरों के लिए कपड़ों को भी पुनर्जीवित करते हैं — रोज़ के गणवेश और टेलरिंग को ताज़गी, रंग और आकार वापस देते हैं।',
+  "pillar.3.title": "रोज़मर्रा और खास अवसरों के कपड़े",
+  "pillar.3.desc": "हमारी सेवा सूची से रोज़मर्रा, औपचारिक और पारंपरिक कपड़ों की देखभाल चुनें।",
 
   'contact.label': 'संपर्क करें',
   'contact.title': 'आइए मिलें। हम यहीं हैं।',
   'contact.addressLabel': 'पता',
-  'contact.address': 'दुकान नं. 12, मुख्य सड़क स्टेशन के पास, वाडी, नागपूर',
   'contact.callLabel': 'कॉल / व्हाट्सएप',
-  'contact.hoursShort': 'सोम – शनि, सुबह 8 – रात 8',
   'contact.emailLabel': 'ईमेल',
-  'contact.emailReply': 'हम 24 घंटे के भीतर उत्तर देते हैं',
   'contact.hoursLabel': 'कार्य समय',
-  'contact.hoursFull': 'सोम – रवि: सुबह 7 – रात 9',
-  'contact.hoursOpen': 'छुट्टियों सहित सभी 7 दिन खुला',
   'contact.openMaps': 'Google Maps में खोलें →',
   'contact.viewMap': 'नक्शा देखें',
 

@@ -1,6 +1,6 @@
 # Rakesh Dry Cleaners
 
-A Next.js 14 landing and booking experience for Rakesh Dry Cleaners (Nagpur), featuring a warm editorial hero, service discovery, and an in-page booking flow that sends requests via WhatsApp.
+A Next.js 16 landing and booking experience for Rakesh Dry Cleaners (Nagpur), featuring a warm editorial hero, service discovery, and an in-page booking flow that sends requests via WhatsApp.
 
 ## Features
 
@@ -10,17 +10,17 @@ A Next.js 14 landing and booking experience for Rakesh Dry Cleaners (Nagpur), fe
 - **Editable cart** — direct quantity entry, plus/minus controls, undo removal, and a focus-managed clear-cart confirmation. Quantities stay between 0 and 99.
 - **Wadi pickup** — home pickup requires an explicit Wadi locality, an allowed PIN, a successful area check, and an address. Changing the PIN/locality invalidates the check. Outside addresses can use shop drop-off.
 - **Service information** — listed per-item/set estimates, separate pickup-charge disclosure, turnaround and minimum-order information. Unknown business values are shown as “Confirmed by the shop.”
-- **Trust & contact** — stats, testimonials, fabric-care pillars, working hours, phone/email links, and a Google Maps embed modal.
+- **Local care & contact** — factual service/booking information and centrally configured shop details. Call, WhatsApp, and Maps links are available only when their real destinations are configured.
 - **WhatsApp floating button** — chat shortcut outside booking; hidden during booking to keep controls unobstructed.
 - **Multilingual** — English / Marathi / Hindi UI, keyboard-operated language menu, and optional local preference storage.
 - **Navigation & motion** — section-aware mobile selection, consistent anchor offsets, reduced-motion support, short reveal transitions, and focus-managed mobile/menu map dialogs. Order summaries scroll with the page.
 
 ## Tech Stack
 
-- Next.js 14 (App Router), React 18, TypeScript (strict)
+- Next.js 16 (App Router), React 19, TypeScript (strict)
 - Custom CSS via `app/globals.css` (no CSS framework)
 - Vitest + Testing Library + jsdom for unit/component tests
-- ESLint (`next/core-web-vitals`)
+- ESLint 9 (compatible with the Next.js lint plugins) (Next.js flat configuration)
 
 ## Project Structure
 
@@ -55,7 +55,7 @@ A Next.js 14 landing and booking experience for Rakesh Dry Cleaners (Nagpur), fe
 - Booking data lives entirely in the browser; sending a request opens a WhatsApp chat with a generated order summary.
 - There is no backend and no order-tracking UI.
 - WhatsApp handoff sends a request; availability and final pricing are confirmed by the shop.
-- The existing phone number, address, hours, reviews, and turnaround claims need business verification before public launch.
+- Unverified contact details, reviews, ratings and years-in-business claims have been removed. Complete `config/business.json` before public launch; see `LAUNCH.md`.
 
 ## Pickup policy and business details
 
@@ -76,3 +76,13 @@ The sixth service card, Home & Bedding, opens Wash → Home & Bedding directly a
 Main message: “Your neighbourhood garment-care shop in Wadi”. The English, Marathi and Hindi hero copy and page titles now reflect this local identity.
 
 The website and editable SVG templates in `brand-kit/` share saffron `#FF9933`, ivory `#FAF8F3` and charcoal `#292522`. Open `brand-kit/index.html` to browse shop-board, garment-bag-panel and blank order-receipt designs. Final physical print dimensions and verified contact details can be supplied before production. Staff clothing is not included.
+
+## Launch readiness
+
+Use Node **24.x** (`nvm use` when available), then `npm ci`. The bundled desktop Node runtime was used to verify the migration; the system Node 18 binary cannot run Next.js 16.
+
+See [LAUNCH.md](LAUNCH.md) for the manual business, domain and real-phone checks. `config/business.json` is the single public contact configuration. No real contact details are invented. Keep secrets out of this file.
+
+`npm run check:launch` checks required contacts, business confirmation flags and the public HTTPS origin. Unknown contacts disable outbound actions. Search indexing stays disabled until `NEXT_PUBLIC_SITE_URL` and confirmed business settings are present. `/robots.txt`, `/sitemap.xml` and conditional business structured data use this configuration. Vercel previews remain unindexed.
+
+`/privacy` explains actual browser storage, session data and third-party connections in all three site languages. Standard response headers disable framing, MIME sniffing and unused browser permissions; the CSP limits objects, base URLs and frame ancestors rather than claiming to restrict every script.
