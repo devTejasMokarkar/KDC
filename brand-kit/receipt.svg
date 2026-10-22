@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="1000" viewBox="0 0 400 1000" role="img" aria-labelledby="title desc"><title id="title">Rakesh Dry Cleaners — Blank order receipt template</title><desc id="desc">Editable brand template using saffron, ivory and charcoal.</desc><rect width="400" height="1000" fill="#FAF8F3"/>
+<rect width="400" height="12" fill="#FF9933"/>
+<g fill="#292522" font-family="Arial, sans-serif">
+<text x="200" y="81" text-anchor="middle" font-family="Georgia, serif" font-size="48">Rakesh</text>
+<text x="200" y="111" text-anchor="middle" font-size="13" letter-spacing="4">DRY CLEANERS</text>
+<text x="200" y="157" text-anchor="middle" font-size="14"><tspan x="200">Your neighbourhood</tspan><tspan x="200" dy="21">garment-care shop in Wadi</tspan></text>
+<line x1="28" x2="372" y1="204" y2="204" stroke="#FF9933" stroke-width="3"/>
+<text x="28" y="241" font-size="18" font-weight="bold">ORDER RECEIPT</text>
+<text x="28" y="280" font-size="14">Order no. __________________________</text>
+<text x="28" y="310" font-size="14">Customer __________________________</text>
+<text x="28" y="340" font-size="14">Date ______________  Qty __________</text>
+<text x="28" y="394" font-size="13" font-weight="bold">ITEM / SERVICE</text><text x="372" y="394" text-anchor="end" font-size="13" font-weight="bold">AMOUNT</text>
+<line x1="28" x2="372" y1="370" y2="370" stroke="#d5cec4"/><line x1="28" x2="372" y1="425" y2="425" stroke="#d5cec4"/><line x1="28" x2="372" y1="480" y2="480" stroke="#d5cec4"/><line x1="28" x2="372" y1="535" y2="535" stroke="#d5cec4"/><line x1="28" x2="372" y1="590" y2="590" stroke="#d5cec4"/>
+<text x="28" y="636" font-size="14">Items subtotal</text><text x="372" y="636" text-anchor="end" font-size="14">________</text>
+<text x="28" y="674" font-size="14">Pickup / additional charges</text><text x="372" y="674" text-anchor="end" font-size="14">________</text>
+<rect x="28" y="700" width="344" height="54" rx="3" fill="#FF9933"/>
+<text x="42" y="735" font-size="17" font-weight="bold">TOTAL</text><text x="358" y="735" text-anchor="end" font-size="17">________</text>
+<text x="28" y="796" font-size="14">Payment status _____________________</text>
+<text x="28" y="830" font-size="14">Collection date _____________________</text>
+<text x="200" y="901" text-anchor="middle" font-size="16">Thank you for choosing local.</text>
+<text x="200" y="937" text-anchor="middle" font-size="12">WADI, NAGPUR</text>
+</g></svg>

@@ -14,8 +14,8 @@ type Step = 0 | 1 | 2;
 type Quantities = Record<string, number>;
 type CheckedArea = { pin: string; locality: string; result: PickupAreaResult };
 
-export default function BookingClient({ initialCategory, selectionRequest, className = '' }: {
-  initialCategory?: string; selectionRequest?: number; className?: string;
+export default function BookingClient({ initialCategory, initialSubcategory, selectionRequest, className = '' }: {
+  initialCategory?: string; initialSubcategory?: string; selectionRequest?: number; className?: string;
 }) {
   const { t, locale } = useI18n();
   const [step, setStep] = useState<Step>(0);
@@ -69,7 +69,11 @@ export default function BookingClient({ initialCategory, selectionRequest, class
       setActiveMain(initialCategory); setSearch(''); setStep(0);
     }
   }, [initialCategory, selectionRequest]);
-  useEffect(() => setActiveSub(subsFor(activeMain)[0]?.id ?? null), [activeMain]);
+  useEffect(() => {
+    const subs = subsFor(activeMain);
+    const requested = activeMain === initialCategory && subs.some(sub => sub.id === initialSubcategory) ? initialSubcategory : undefined;
+    setActiveSub(requested ?? subs[0]?.id ?? null);
+  }, [activeMain, initialCategory, initialSubcategory, selectionRequest]);
   useEffect(() => {
     if (selectedDate && selectedTime && isSlotUnavailable(selectedDate, selectedTime, now)) setSelectedTime(null);
   }, [selectedDate, selectedTime, now]);

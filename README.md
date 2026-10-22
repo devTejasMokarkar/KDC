@@ -62,3 +62,17 @@ A Next.js 14 landing and booking experience for Rakesh Dry Cleaners (Nagpur), fe
 `lib/booking-policy.ts` currently uses Wadi PIN **440023**, listed in the [government postal-office directory](https://rect.crpf.gov.in/Upload/Recruitment/ATTACHMENTS/29_1/1_2910216.pdf). The PIN also covers nearby localities, so the checker explicitly requires Wadi and rejects an outside-Wadi selection even with the same PIN. This is a customer-declared locality/PIN check, not geocoding or a server-side delivery guarantee; the shop confirms the exact address before accepting the request.
 
 Pickup charges, minimum order, and category turnaround hours remain unset until the business supplies confirmed values. Set them in `BOOKING_POLICY`; a null pickup charge must never be presented as free. Estimates disclose that pickup/extra charges are confirmed separately. Item prices remain the existing catalog values.
+
+## Washing methods and asset cleanup
+
+Everyday clothes are washed by hand; heavy items such as blankets use professional industrial washing machines. The Fabric Care section explains both methods in English, Marathi, and Hindi and includes the supplied equipment image.
+
+The hero uses 45 sampled frame IDs per viewport variant (90 images total). Unused frames, the unreferenced scroll hooks module, and the outdated README.prd were removed. The current README is the source of project documentation. Deleted tracked files remain recoverable from Git history.
+
+The sixth service card, Home & Bedding, opens Wash → Home & Bedding directly and uses existing catalog prices. It retains the shared hover, hold, keyboard, and flip controls.
+
+## Local brand identity
+
+Main message: “Your neighbourhood garment-care shop in Wadi”. The English, Marathi and Hindi hero copy and page titles now reflect this local identity.
+
+The website and editable SVG templates in `brand-kit/` share saffron `#FF9933`, ivory `#FAF8F3` and charcoal `#292522`. Open `brand-kit/index.html` to browse shop-board, garment-bag-panel and blank order-receipt designs. Final physical print dimensions and verified contact details can be supplied before production. Staff clothing is not included.

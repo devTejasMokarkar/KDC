@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useI18n } from '@/lib/i18n';
 
-// Sample the existing footage instead of downloading all 300 frames up front.
+// Keep these 45 sampled frame IDs in sync with the assets in both frame folders.
 const FRAMES = Array.from({ length: 45 }, (_, i) => 1 + Math.round(i * 299 / 44));
 
 export default function SequenceCanvas() {
@@ -85,7 +85,7 @@ export default function SequenceCanvas() {
     <section id="the-process" className="care-hero" ref={sectionRef} aria-labelledby="hero-title">
       <div className="care-hero__copy">
         <p className="eyebrow"><span />{t('hero.location')}</p>
-        <h1 id="hero-title">{t('hero.title')}<em>{t('hero.titleAccent')}</em></h1>
+        <h1 id="hero-title">{t('hero.title')}{' '}<em>{t('hero.titleAccent')}</em></h1>
         <p className="care-hero__description">{t('hero.description')}</p>
         <div className="care-hero__actions">
           <a className="btn-primary" href="#book">{t('hero.book')}<span aria-hidden="true">↗</span></a>

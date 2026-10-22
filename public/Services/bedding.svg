@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="840" viewBox="0 0 1200 840">
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#e6d8c3"/><stop offset="1" stop-color="#f6efe4"/></linearGradient>
+    <linearGradient id="linen" x2="0" y2="1"><stop stop-color="#fffdf8"/><stop offset="1" stop-color="#d6c6af"/></linearGradient>
+    <linearGradient id="blanket" x2="1" y2="1"><stop stop-color="#ffb061"/><stop offset="1" stop-color="#c67526"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="20" stdDeviation="20" flood-color="#4b3020" flood-opacity=".18"/></filter>
+  </defs>
+  <path fill="url(#bg)" d="M0 0h1200v840H0z"/>
+  <g filter="url(#shadow)" transform="rotate(-6 600 450)">
+    <rect x="185" y="420" width="830" height="205" rx="48" fill="url(#linen)"/>
+    <path d="M220 526h750M220 564h750" stroke="#c2af96" stroke-width="3" fill="none"/>
+    <rect x="230" y="305" width="740" height="196" rx="40" fill="url(#blanket)"/>
+    <path d="M260 415h680M260 443h680" stroke="#99551e" stroke-opacity=".35" stroke-width="3"/>
+    <rect x="345" y="188" width="510" height="184" rx="65" fill="url(#linen)"/>
+    <rect x="365" y="208" width="470" height="144" rx="52" fill="none" stroke="#d1bfaa" stroke-width="3"/>
+    <path d="M238 339v121m16-130v142m16-145v148" stroke="#ffe4c7" stroke-width="5" opacity=".6"/>
+  </g>
+</svg>

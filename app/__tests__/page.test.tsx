@@ -26,7 +26,7 @@ describe('HomePage', () => {
   it('renders all service categories', () => {
     render(<HomePage />);
 
-    for (const label of ['Wash', 'Wash & Iron', 'Dry Clean', 'Colour Restore', 'Rafoo (Mending)']) {
+    for (const label of ['Wash', 'Wash & Iron', 'Dry Clean', 'Colour Restore', 'Rafoo (Mending)', 'Home & Bedding']) {
       expect(screen.getAllByText(label).length).toBeGreaterThan(0);
     }
   });
@@ -52,6 +52,21 @@ describe('HomePage', () => {
 
     const activeTab = document.querySelector('#book .svc-tab.active');
     expect(activeTab).toHaveTextContent('Wash');
+  });
+
+  it('opens bedding prices from another category and supports selecting the card again', async () => {
+    const user = userEvent.setup();
+    render(<HomePage />);
+    await user.click(screen.getByRole('button', { name: 'Book now: Dry Clean' }));
+    await user.click(screen.getByRole('button', { name: 'Book now: Home & Bedding' }));
+    expect(screen.getByRole('tab', { name: 'Wash' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('tab', { name: 'Home & Bedding' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('spinbutton', { name: 'Quantity for Bedsheet (Wash)' })).toBeInTheDocument();
+    await user.click(screen.getByRole('tab', { name: 'Tops & Shirts' }));
+    await user.click(screen.getByRole('button', { name: 'Book now: Home & Bedding' }));
+    expect(screen.getByRole('tab', { name: 'Home & Bedding' })).toHaveAttribute('aria-selected', 'true');
+    await user.click(screen.getByRole('button', { name: 'Book now: Wash' }));
+    expect(screen.getByRole('tab', { name: 'Tops & Shirts' })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('renders contact links and actions', () => {

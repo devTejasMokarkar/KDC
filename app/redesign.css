@@ -1,11 +1,13 @@
 /* Warm surfaces, clear actions and a quieter rhythm for the garment-care site. */
 :root {
   --brand-saffron: #FF9933;
+  --brand-ivory: #FAF8F3;
+  --brand-charcoal: #292522;
   --brand-saffron-hover: #f58a20;
-  --bg-primary: #faf8f3;
+  --bg-primary: var(--brand-ivory);
   --bg-secondary: #f1eee6;
-  --bg-nav: #faf8f3;
-  --text-heading: #292522;
+  --bg-nav: var(--brand-ivory);
+  --text-heading: var(--brand-charcoal);
   --text-body: #48413c;
   --text-muted: #6b625b;
   --accent-steel: #a5460c;
@@ -18,6 +20,8 @@
   --surface-input: #fffefa;
   --section-alt-bg: #eeeae0;
   --pillar-bg: #faf8f3;
+  --bg-mobile-menu: var(--brand-ivory);
+  --gradient-heading: linear-gradient(160deg, var(--brand-charcoal), #a5460c);
   --nav-height: 82px;
 }
 html { scroll-padding-top: 104px; }
@@ -40,7 +44,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
 .care-hero__copy { padding: 76px 8% 44px 10%; align-self: center; }
 .eyebrow { font-size: .66rem; letter-spacing: .15em; font-weight: 600; display: flex; align-items: center; gap: 10px; color: var(--accent-steel); }
 .eyebrow > span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-steel); }
-.care-hero h1 { font-family: var(--font-serif); font-size: clamp(5rem, 8.8vw, 9rem); font-weight: 400; line-height: .91; letter-spacing: -.055em; color: var(--text-heading); margin: 32px 0 27px; }
+.care-hero h1 { font-family: var(--font-serif); font-size: clamp(2.8rem, 4.5vw, 4.8rem); font-weight: 400; line-height: 1.05; letter-spacing: -.035em; color: var(--text-heading); margin: 32px 0 27px; }
 .care-hero h1 em { display: block; color: var(--accent-steel); font-weight: 400; }
 .care-hero__description { max-width: 370px; font-size: .98rem; line-height: 1.85; color: var(--text-muted); }
 .care-hero__actions { display: flex; gap: 26px; align-items: center; flex-wrap: wrap; margin-top: 30px; }
@@ -159,11 +163,13 @@ a, button { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 900px) {
   :root {
   --brand-saffron: #FF9933;
+  --brand-ivory: #FAF8F3;
+  --brand-charcoal: #292522;
   --brand-saffron-hover: #f58a20; --nav-height: 72px; }
   .navbar { grid-template-columns: 1fr auto; padding: 0 22px; }
   .navbar__wordmark { font-size: 1.75rem; }
   .care-hero { grid-template-columns: 1fr 1fr; min-height: 580px; }
-  .care-hero h1 { font-size: clamp(4.6rem, 10vw, 7rem); }
+  .care-hero h1 { font-size: clamp(2.5rem, 4.6vw, 3.8rem); }
   .care-hero__copy { padding: 40px 7%; }
   .care-hero__visual { margin: 18px 18px 18px 0; }
   .care-hero__footnote { display: none; }
@@ -196,7 +202,7 @@ a, button { -webkit-tap-highlight-color: transparent; }
   .care-hero { display: flex; flex-direction: column; min-height: 0; }
   .care-hero__copy { padding: 38px 24px 32px; }
   .eyebrow { font-size: .58rem; }
-  .care-hero h1 { font-size: clamp(5.2rem, 21vw, 7.8rem); margin: 26px 0 22px; }
+  .care-hero h1 { font-size: clamp(2.65rem, 11.5vw, 4rem); margin: 26px 0 22px; }
   .care-hero__description { max-width: 100%; font-size: .87rem; line-height: 1.8; }
   .care-hero__actions { gap: 24px; margin-top: 24px; }
   .care-hero__actions .btn-primary { padding: 14px 18px; gap: 22px; font-size: .8rem; }
@@ -482,4 +488,27 @@ main[tabindex="-1"]:focus { outline: none; }
 .service-card--flippable .service-card__perspective { -webkit-touch-callout: none; }
 @media (hover: none) {
   .service-card--flippable .service-card__perspective { user-select: none; -webkit-user-select: none; }
+}
+
+/* Washing services lead; equipment appears only as supporting process detail. */
+.washing-methods { margin-bottom: 64px; text-align: left; }
+.washing-methods .pillars-label { text-align: left; margin-bottom: 16px; }
+.washing-methods__intro-block { max-width: 740px; }
+.washing-methods h2 { margin: 0 0 18px; font-family: var(--font-serif); font-size: clamp(2rem, 3.6vw, 3.2rem); font-weight: 500; line-height: 1.12; color: var(--text-heading); }
+.washing-methods__intro, .washing-methods__method p { color: var(--text-muted); font-size: .9rem; line-height: 1.75; }
+.washing-methods__intro { margin-bottom: 28px; }
+.washing-methods__steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.washing-methods__method { display: flex; gap: 16px; padding: 24px 0; border-top: 2px solid var(--brand-saffron); }
+.washing-methods__method > span { flex-shrink: 0; display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid #e5b27c; border-radius: 50%; background: #fff0df; color: #8a4100; font-size: .72rem; }
+.washing-methods__method > div { min-width: 0; }
+.washing-methods__method h3 { margin: 0 0 7px; font-size: 1rem; font-weight: 600; line-height: 1.4; }
+.washing-methods__method p { margin: 0; }
+.washing-methods .btn-secondary { margin-top: 8px; display: inline-flex; align-items: center; gap: 24px; }
+.washing-methods__equipment { display: flex; align-items: center; gap: 16px; margin: 20px 0 0; padding-top: 16px; border-top: 1px solid #e3d9cb; }
+.washing-methods__equipment img { width: 128px; height: auto; flex-shrink: 0; mix-blend-mode: multiply; }
+.washing-methods__equipment figcaption { color: var(--text-muted); font-size: .75rem; line-height: 1.65; }
+@media (max-width: 700px) {
+  .washing-methods { margin-bottom: 48px; }
+  .washing-methods__steps { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .washing-methods__equipment { flex-wrap: wrap; }
 }

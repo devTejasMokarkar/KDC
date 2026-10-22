@@ -15,9 +15,9 @@ export const LANG_CODES: Record<Locale, string> = {
 };
 
 export const DOC_TITLES: Record<Locale, string> = {
-  en: 'Rakesh Dry Cleaners — Atelier-Grade Garment Care',
-  mr: 'राकेश ड्राय क्लीनर्स — दर्जेदार वस्त्र काळजी',
-  hi: 'राकेश ड्राय क्लीनर्स — उच्च गुणवत्ता वाली कपड़ा देखभाल',
+  en: 'Rakesh Dry Cleaners — Your neighbourhood garment-care shop in Wadi',
+  mr: 'राकेश ड्राय क्लीनर्स — वाडीतील आपले वस्त्र निगा केंद्र',
+  hi: 'राकेश ड्राय क्लीनर्स — वाडी में आपके पड़ोस की कपड़ों की देखभाल की दुकान',
 };
 
 export const en: Record<string, string> = {
@@ -96,9 +96,9 @@ export const en: Record<string, string> = {
   "booking.noTimes": "No times left on this date. Please choose another day.",
 
   "hero.location": "WADI, NAGPUR · GARMENT CARE",
-  "hero.title": "Care,",
-  "hero.titleAccent": "restored.",
-  "hero.description": "Your everyday favourites. Your occasion best. Thoughtful dry cleaning, washing and mending, all in one place.",
+  "hero.title": "Your neighbourhood",
+  "hero.titleAccent": "garment-care shop in Wadi",
+  "hero.description": "Everyday clothes washed by hand. Professional machines for heavy loads. Washing, dry cleaning, ironing and mending, right here in Wadi.",
   "hero.book": "Book a pickup",
   "hero.prices": "Explore prices",
   "hero.benefit1": "Pickup or shop drop-off",
@@ -173,6 +173,13 @@ export const en: Record<string, string> = {
   'trust.label': 'Trusted by the customers',
   'skip.main': 'Skip to main content',
 
+  "svc.bedding.label": "Home & Bedding",
+  "svc.bedding.desc": "Professional washing for bedding, curtains and bulky home textiles.",
+  "svc.bedding.covers.0": "Bedsheets and pillow covers",
+  "svc.bedding.covers.1": "Curtains",
+  "svc.bedding.covers.2": "Sofa covers",
+  "svc.bedding.covers.3": "Car seat covers",
+
   'svc.wash.label': 'Wash',
   'svc.wash.desc': 'Everyday washing for clothes, home textiles and more.',
   'svc.from': 'From ₹{from}',
@@ -220,10 +227,21 @@ export const en: Record<string, string> = {
   'testi.2.quote':
     'Got a rafoo job done on an old saree I thought was unwearable. Impressive.',
 
+  "care.label": "How we care for your laundry",
+  "care.title": "The right wash for every load.",
+  "care.intro": "We use both hand washing and professional industrial machines, choosing the method to suit the item and its care needs.",
+  "care.handTitle": "Everyday clothes, washed by hand",
+  "care.handDesc": "We hand wash everyday clothes with individual attention to the fabric and finish.",
+  "care.machineTitle": "Professional cleaning for blankets & heavy items",
+  "care.machineDesc": "For heavy loads such as blankets, we use professional industrial washing machines.",
+  "care.book": "Book laundry service",
+  "care.machineAlt": "Professional industrial laundry machine with a stainless steel drum and control panel",
+  "care.machineCaption": "We use industrial equipment as part of our heavy-item cleaning service.",
+
   'pillars.label': 'The Four Pillars of Rakesh Care',
   'pillar.0.title': 'Hand Washing',
   'pillar.0.desc':
-    'Every garment is washed carefully by hand — a gentler, more attentive clean for clothes that deserve better than a machine.',
+    'Everyday clothes are washed carefully by hand, with attention to the fabric and finish. Heavy items such as blankets are cleaned using professional industrial machines.',
   'pillar.1.title': 'Natural Sun Drying',
   'pillar.1.desc':
     "Clothes are dried in the open sun, the old-fashioned way — leaving them fresh, soft, and kind to delicate fabrics.",
@@ -467,9 +485,9 @@ export const mr: Record<string, string> = {
   "booking.noTimes": "या दिवशी वेळा उपलब्ध नाहीत. कृपया दुसरा दिवस निवडा.",
 
   "hero.location": "वाडी, नागपूर · वस्त्रांची काळजी",
-  "hero.title": "काळजी,",
-  "hero.titleAccent": "नव्याने.",
-  "hero.description": "रोजचे आवडते कपडे असोत किंवा खास प्रसंगाचा पोशाख. ड्राय क्लीनिंग, धुलाई आणि रफूची सेवा एकाच ठिकाणी.",
+  "hero.title": "वाडीतील आपले",
+  "hero.titleAccent": "वस्त्र निगा केंद्र",
+  "hero.description": "रोजचे कपडे हाताने धुतो. जड वस्तूंसाठी व्यावसायिक मशीन वापरतो. धुलाई, ड्राय क्लीनिंग, इस्त्री आणि रफू, आपल्या वाडीतच.",
   "hero.book": "पिकअप बुक करा",
   "hero.prices": "दर पाहा",
   "hero.benefit1": "घरून पिकअप किंवा दुकानात द्या",
@@ -544,6 +562,13 @@ export const mr: Record<string, string> = {
   'trust.label': 'ग्राहकांनी केलेला विश्वास',
   'skip.main': 'मुख्य सामग्रीकडे जा',
 
+  "svc.bedding.label": "घरगुती वस्त्र व बेडिंग",
+  "svc.bedding.desc": "बेडिंग, पडदे आणि मोठ्या घरगुती वस्त्रांची व्यावसायिक धुलाई.",
+  "svc.bedding.covers.0": "बेडशीट आणि उशांची कव्हरे",
+  "svc.bedding.covers.1": "पडदे",
+  "svc.bedding.covers.2": "सोफा कव्हरे",
+  "svc.bedding.covers.3": "कार सीट कव्हरे",
+
   'svc.wash.label': 'धुणे',
   'svc.wash.desc': 'कपडे, घरगुती वस्त्र आणि बाकीची रोजची धुणी.',
   'svc.from': '₹{from} पासून',
@@ -591,10 +616,21 @@ export const mr: Record<string, string> = {
   'testi.2.quote':
     'एक जुनी साडी जी नक्कीच वापरता येणार नाही असे वाटले होते, तिच्यावर रफू करून घेतली. प्रभावी.',
 
+  "care.label": "आम्ही तुमच्या कपड्यांची निगा कशी राखतो",
+  "care.title": "प्रत्येक कपड्यासाठी योग्य धुलाई.",
+  "care.intro": "आम्ही हाताने धुणे आणि व्यावसायिक औद्योगिक मशीन या दोन्ही पद्धती वापरतो. वस्तू आणि तिच्या निगेच्या गरजेनुसार पद्धत निवडतो.",
+  "care.handTitle": "रोजचे कपडे, हाताने धुलाई",
+  "care.handDesc": "रोजचे कपडे हाताने धुताना कापड आणि फिनिशकडे वैयक्तिक लक्ष देतो.",
+  "care.machineTitle": "ब्लँकेट आणि जड वस्तूंची व्यावसायिक धुलाई",
+  "care.machineDesc": "ब्लँकेटसारख्या जड वस्तू धुण्यासाठी आम्ही व्यावसायिक औद्योगिक वॉशिंग मशीन वापरतो.",
+  "care.book": "धुलाई सेवा बुक करा",
+  "care.machineAlt": "स्टेनलेस स्टील ड्रम आणि नियंत्रण पॅनेल असलेली व्यावसायिक औद्योगिक धुलाई मशीन",
+  "care.machineCaption": "जड वस्तूंच्या धुलाई सेवेसाठी आम्ही औद्योगिक उपकरणे वापरतो.",
+
   'pillars.label': 'राकेश केअरचे चार आधारस्तंभ',
   'pillar.0.title': 'हाताने धुणे',
   'pillar.0.desc':
-    'प्रत्येक वस्त्र हाताने काळजीपूर्वक धुतले जाते — मशीनपेक्षा उत्तम अशा कपड्यांसाठी अधिक सौम्य, अधिक लक्ष देणारी स्वच्छता.',
+    'रोजचे कपडे कापड आणि फिनिशकडे लक्ष देऊन हाताने धुतले जातात. ब्लँकेटसारख्या जड वस्तूंसाठी व्यावसायिक औद्योगिक मशीन वापरतो.',
   'pillar.1.title': 'नैसर्गिक सूर्यप्रकाशात वाळवणे',
   'pillar.1.desc':
     'कपडे उघड्या सूर्यप्रकाशात, जुन्या पद्धतीने वाळवले जातात — ताजे, मऊ आणि नाजूक फॅब्रिकसाठी योग्य.',
@@ -837,9 +873,9 @@ export const hi: Record<string, string> = {
   "booking.noTimes": "इस दिन कोई समय उपलब्ध नहीं है। कृपया दूसरा दिन चुनें।",
 
   "hero.location": "वाडी, नागपुर · कपड़ों की देखभाल",
-  "hero.title": "देखभाल,",
-  "hero.titleAccent": "फिर से.",
-  "hero.description": "रोज़ के पसंदीदा कपड़े हों या खास मौकों की पोशाक। ड्राय क्लीनिंग, धुलाई और रफू की सेवाएँ एक ही जगह।",
+  "hero.title": "वाडी में आपके पड़ोस की",
+  "hero.titleAccent": "कपड़ों की देखभाल की दुकान",
+  "hero.description": "रोज़मर्रा के कपड़े हाथ से धोते हैं। भारी वस्तुओं के लिए पेशेवर मशीनों का उपयोग करते हैं। धुलाई, ड्राय क्लीनिंग, इस्त्री और रफू, आपके वाडी में ही।",
   "hero.book": "पिकअप बुक करें",
   "hero.prices": "कीमतें देखें",
   "hero.benefit1": "घर से पिकअप या दुकान पर दें",
@@ -914,6 +950,13 @@ export const hi: Record<string, string> = {
   'trust.label': 'ग्राहकों का भरोसा',
   'skip.main': 'मुख्य सामग्री पर जाएँ',
 
+  "svc.bedding.label": "घरेलू वस्त्र और बिस्तर",
+  "svc.bedding.desc": "बिस्तर, पर्दों और बड़े घरेलू कपड़ों की पेशेवर धुलाई।",
+  "svc.bedding.covers.0": "चादरें और तकिया कवर",
+  "svc.bedding.covers.1": "पर्दे",
+  "svc.bedding.covers.2": "सोफा कवर",
+  "svc.bedding.covers.3": "कार सीट कवर",
+
   'svc.wash.label': 'धुलाई',
   'svc.wash.desc': 'कपड़ों, घरेलू वस्त्रों और अन्य की रोज़ाना धुलाई।',
   'svc.from': '₹{from} से',
@@ -961,10 +1004,21 @@ export const hi: Record<string, string> = {
   'testi.2.quote':
     'एक पुरानी साड़ी जिसे मैं बेकार समझता था, उस पर रफू करवाई। प्रभावशाली।',
 
+  "care.label": "हम आपके कपड़ों की देखभाल कैसे करते हैं",
+  "care.title": "हर कपड़े के लिए सही धुलाई।",
+  "care.intro": "हम हाथ से धुलाई और पेशेवर औद्योगिक मशीन, दोनों का उपयोग करते हैं। वस्तु और उसकी देखभाल की ज़रूरत के अनुसार तरीका चुनते हैं।",
+  "care.handTitle": "रोज़मर्रा के कपड़े, हाथ से धुलाई",
+  "care.handDesc": "रोज़मर्रा के कपड़ों को हाथ से धोते हुए कपड़े और फिनिश पर व्यक्तिगत ध्यान देते हैं।",
+  "care.machineTitle": "कंबल और भारी वस्तुओं की पेशेवर धुलाई",
+  "care.machineDesc": "कंबल जैसी भारी वस्तुओं की धुलाई के लिए हम पेशेवर औद्योगिक वॉशिंग मशीनों का उपयोग करते हैं।",
+  "care.book": "धुलाई सेवा बुक करें",
+  "care.machineAlt": "स्टेनलेस स्टील ड्रम और कंट्रोल पैनल वाली पेशेवर औद्योगिक धुलाई मशीन",
+  "care.machineCaption": "भारी वस्तुओं की धुलाई सेवा में हम औद्योगिक उपकरणों का उपयोग करते हैं।",
+
   'pillars.label': 'राकेश केयर के चार स्तंभ',
   'pillar.0.title': 'हाथों से धुलाई',
   'pillar.0.desc':
-    'हर वस्त्र हाथों से ध्यान से धोया जाता है — मशीन से बेहतर कपड़ों के लिए अधिक कोमल, अधिक ध्यान देने वाली सफाई।',
+    'रोज़मर्रा के कपड़े हाथों से धोए जाते हैं, कपड़े और फिनिश पर ध्यान देते हुए। कंबल जैसी भारी वस्तुओं के लिए पेशेवर औद्योगिक मशीनों का उपयोग करते हैं।',
   'pillar.1.title': 'प्राकृतिक धूप में सुखाना',
   'pillar.1.desc':
     'कपड़े खुली धूप में, पुराने तरीके से सुखाए जाते हैं — ताज़े, मुलायम और नाज़ुक फैब्रिक के लिए कोमल।',

@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useRef } from 'react';
 import type { ReactNode } from 'react';
+import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import SequenceCanvas from '@/components/SequenceCanvas';
 import BookingClient from '@/components/BookingClient';
@@ -14,15 +15,17 @@ import { SERVICE_ITEMS } from '@/lib/service-data';
 /* ==================================================================
    SERVICE CATALOG — main categories (localised at render time)
 ================================================================== */
-const SERVICE_CATEGORIES = [
+const SERVICE_CATEGORIES: { id: string; image: string; bookingMain?: string; sub?: string }[] = [
   { id: 'wash', image: 'wash.png' },
   { id: 'iron', image: 'iron.png' },
   { id: 'dryclean', image: 'dryclean.png' },
   { id: 'colorrestore', image: 'colorrestore.png' },
   { id: 'rafoo', image: 'rafoo.png' },
+  { id: 'bedding', image: 'bedding.svg', bookingMain: 'wash', sub: 'home' },
 ];
 
 const SVC_PATHS: Record<string, ReactNode> = {
+  bedding: <><path d="M3 18V8m18 10V8M3 14h18M3 18v3m18-3v3M6 10V6h12v4" /><path d="M3 18h18M9 10h6" /></>,
   wash: (
     <>
       <circle cx="12" cy="13" r="7" />
@@ -94,7 +97,7 @@ const PILLARS = [
 
 function HomePageContent() {
   const { t } = useI18n();
-  const [bookingCategory, setBookingCategory] = useState<{ id: string; request: number }>();
+  const [bookingCategory, setBookingCategory] = useState<{ id: string; sub?: string; request: number }>();
   const [mapOpen, setMapOpen] = useState(false);
 
   const mapRef = useRef<HTMLDivElement>(null);
@@ -104,7 +107,7 @@ function HomePageContent() {
     () =>
       SERVICE_CATEGORIES.map((cat) => ({
         ...cat,
-        from: Math.min(...SERVICE_ITEMS.filter(item => item.main === cat.id).map(item => item.price)),
+        from: Math.min(...SERVICE_ITEMS.filter(item => item.main === (cat.bookingMain ?? cat.id) && (!cat.sub || item.sub === cat.sub)).map(item => item.price)),
         label: t(`svc.${cat.id}.label`),
         desc: t(`svc.${cat.id}.desc`),
         covers: [0, 1, 2, 3].map((i) => t(`svc.${cat.id}.covers.${i}`)),
@@ -113,7 +116,7 @@ function HomePageContent() {
   );
 
   const stats = useMemo(
-    () => STATS.map((s) => ({ value: s.key === 3 ? t('flow.wadi') : s.value, label: t(`stat.${s.key}.label`) })),
+    () => STATS.map((s) => ({ value: s.key === 3 ? t('flow.wadi') : s.key === 1 ? String(SERVICE_CATEGORIES.length) : s.value, label: t(`stat.${s.key}.label`) })),
     [t]
   );
 
@@ -138,8 +141,8 @@ function HomePageContent() {
 
   const closeMap = () => setMapOpen(false);
 
-  const goToBooking = (catId: string) => {
-    setBookingCategory(current => ({ id: catId, request: (current?.request ?? 0) + 1 }));
+  const goToBooking = (catId: string, sub?: string) => {
+    setBookingCategory(current => ({ id: catId, sub, request: (current?.request ?? 0) + 1 }));
     scrollToSection('#book');
     requestAnimationFrame(() => document.getElementById('booking-headline')?.focus({ preventScroll: true }));
   };
@@ -167,7 +170,7 @@ function HomePageContent() {
             {categories.map((cat, index) => (
               <CardFlip
                 key={cat.id}
-                category={cat.id}
+                category={cat.bookingMain ?? cat.id}
                 title={cat.label}
                 subtitle={t('svc.from', { from: cat.from })}
                 description={cat.desc}
@@ -175,14 +178,14 @@ function HomePageContent() {
                 icon={svcIcon(cat.id)}
                 imageSrc={cat.image ? `/Services/${cat.image}` : undefined}
                 imageAlt={cat.label}
-                onBook={() => goToBooking(cat.id)}
+                onBook={() => goToBooking(cat.bookingMain ?? cat.id, cat.sub)}
                 className={`scroll-reveal scroll-reveal--up stagger-${(index % 6) + 1}`}
               />
             ))}
           </div>
         </section>
 
-        <BookingClient initialCategory={bookingCategory?.id} selectionRequest={bookingCategory?.request} />
+        <BookingClient initialSubcategory={bookingCategory?.sub} initialCategory={bookingCategory?.id} selectionRequest={bookingCategory?.request} />
 
         {/* ── TRUST — stats + testimonials ────────────────────────────────── */}
         <section id="testimonials" className="trust-section" aria-labelledby="trust-heading">
@@ -213,8 +216,32 @@ function HomePageContent() {
         <section
           id="fabric-care"
           className="pillars-section"
-          aria-labelledby="pillars-heading"
+          aria-labelledby="care-heading"
         >
+          <div className="washing-methods">
+            <div className="washing-methods__intro-block">
+              <span className="pillars-label">{t('care.label')}</span>
+              <h2 id="care-heading">{t('care.title')}</h2>
+              <p className="washing-methods__intro">{t('care.intro')}</p>
+            </div>
+            <div className="washing-methods__steps">
+              <article className="washing-methods__method">
+                <span aria-hidden="true">01</span>
+                <div><h3>{t('care.handTitle')}</h3><p>{t('care.handDesc')}</p></div>
+              </article>
+              <article className="washing-methods__method">
+                <span aria-hidden="true">02</span>
+                <div>
+                  <h3>{t('care.machineTitle')}</h3><p>{t('care.machineDesc')}</p>
+                  <figure className="washing-methods__equipment">
+                    <Image src="/Services/industrial-washer.png" alt={t('care.machineAlt')} width={1536} height={1024} sizes="160px" />
+                    <figcaption>{t('care.machineCaption')}</figcaption>
+                  </figure>
+                </div>
+              </article>
+            </div>
+            <button type="button" className="btn-secondary" onClick={() => goToBooking('wash')}>{t('care.book')}<span aria-hidden="true">↗</span></button>
+          </div>
           <span className="pillars-label stagger-1" id="pillars-heading">
             {t('pillars.label')}
           </span>
