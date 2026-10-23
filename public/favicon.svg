@@ -1,7 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-labelledby="title">
-  <title>Rakesh Dry Cleaners</title>
+  <title>K</title>
   <rect width="100" height="100" rx="22" fill="#292522" />
-  <path d="M34 78 V25 M34 25 H59 A15 15 0 0 1 59 55 H34 M47 55 L66 78"
-        fill="none" stroke="#FF9933" stroke-width="13"
-        stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M30 24 V76 M70 24 L32 51 L70 76" fill="none" stroke="#FF9933" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" />
 </svg>

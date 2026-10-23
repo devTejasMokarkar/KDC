@@ -166,6 +166,49 @@ function HomePageContent() {
           </div>
         </section>
 
+        {/* ── PILLARS / WHY US ───────────────────────────────────────────── */}
+        <section
+          id="fabric-care"
+          className="pillars-section"
+          aria-labelledby="care-heading"
+        >
+          <div className="washing-methods">
+            <div className="washing-methods__intro-block">
+              <span className="pillars-label">{t('care.label')}</span>
+              <h2 id="care-heading">{t('care.title')}</h2>
+              <p className="washing-methods__intro">{t('care.intro')}</p>
+            </div>
+            <div className="washing-methods__steps">
+              <article className="washing-methods__method">
+                <div className="washing-methods__label"><span aria-hidden="true">01</span><h3>{t('care.handTitle')}</h3></div>
+                <p>{t('care.handDesc')}</p>
+                <div className="washing-methods__everyday-visual" aria-hidden="true"><Image src="/Services/wash.png" alt="" width={1254} height={1254} sizes="(max-width: 700px) 1px, 45vw" /></div>
+              </article>
+              <article className="washing-methods__method">
+                <div className="washing-methods__label"><span aria-hidden="true">02</span><h3>{t('care.machineTitle')}</h3></div>
+                <p>{t('care.machineDesc')}</p>
+                <figure className="washing-methods__equipment">
+                  <Image src="/Services/industrial-washer.png" alt={t('care.machineAlt')} width={1536} height={1024} sizes="(max-width: 700px) 220px, 180px" />
+                  <figcaption>{t('care.machineCaption')}</figcaption>
+                </figure>
+              </article>
+            </div>
+            <button type="button" className="btn-secondary" onClick={() => goToBooking('wash')}>{t('care.book')}<span aria-hidden="true">↗</span></button>
+          </div>
+          <details className="care-more">
+            <summary>{t('pillars.label')}<span aria-hidden="true">＋</span></summary>
+          <div className="pillars-grid" role="list">
+            {pillars.map((p, index) => (
+              <article key={p.num} className={`pillar scroll-reveal scroll-reveal--up stagger-${(index % 6) + 1}`} role="listitem">
+                <p className="pillar__number" aria-hidden="true">{p.num}</p>
+                <h3 className="pillar__title">{p.title}</h3>
+                <p className="pillar__desc">{p.desc}</p>
+              </article>
+            ))}
+          </div>
+          </details>
+        </section>
+
         <BookingClient initialSubcategory={bookingCategory?.sub} initialCategory={bookingCategory?.id} selectionRequest={bookingCategory?.request} />
 
         {/* ── TRUST — stats + testimonials ────────────────────────────────── */}
@@ -182,50 +225,6 @@ function HomePageContent() {
               ))}
             </div>
 
-          </div>
-        </section>
-
-        {/* ── PILLARS / WHY US ───────────────────────────────────────────── */}
-        <section
-          id="fabric-care"
-          className="pillars-section"
-          aria-labelledby="care-heading"
-        >
-          <div className="washing-methods">
-            <div className="washing-methods__intro-block">
-              <span className="pillars-label">{t('care.label')}</span>
-              <h2 id="care-heading">{t('care.title')}</h2>
-              <p className="washing-methods__intro">{t('care.intro')}</p>
-            </div>
-            <div className="washing-methods__steps">
-              <article className="washing-methods__method">
-                <span aria-hidden="true">01</span>
-                <div><h3>{t('care.handTitle')}</h3><p>{t('care.handDesc')}</p></div>
-              </article>
-              <article className="washing-methods__method">
-                <span aria-hidden="true">02</span>
-                <div>
-                  <h3>{t('care.machineTitle')}</h3><p>{t('care.machineDesc')}</p>
-                  <figure className="washing-methods__equipment">
-                    <Image src="/Services/industrial-washer.png" alt={t('care.machineAlt')} width={1536} height={1024} sizes="160px" />
-                    <figcaption>{t('care.machineCaption')}</figcaption>
-                  </figure>
-                </div>
-              </article>
-            </div>
-            <button type="button" className="btn-secondary" onClick={() => goToBooking('wash')}>{t('care.book')}<span aria-hidden="true">↗</span></button>
-          </div>
-          <span className="pillars-label stagger-1" id="pillars-heading">
-            {t('pillars.label')}
-          </span>
-          <div className="pillars-grid" role="list">
-            {pillars.map((p, index) => (
-              <article key={p.num} className={`pillar scroll-reveal scroll-reveal--up stagger-${(index % 6) + 1}`} role="listitem">
-                <p className="pillar__number" aria-hidden="true">{p.num}</p>
-                <h3 className="pillar__title">{p.title}</h3>
-                <p className="pillar__desc">{p.desc}</p>
-              </article>
-            ))}
           </div>
         </section>
 
@@ -276,14 +275,14 @@ function HomePageContent() {
 
       {/* ── FOOTER ─────────────────────────────────────────────────────── */}
       <footer className="footer" role="contentinfo">
-        <span className="footer__wordmark">Rakesh Dry Cleaners</span>
+        <span className="footer__wordmark">{BUSINESS.name}</span>
         <ul className="footer__links" role="list">
           <li><a href="#services">{t('footer.services')}</a></li>
           <li><a href="#fabric-care">{t('footer.fabricCare')}</a></li>
           <li><a href="#book">{t('footer.billing')}</a></li>
           <li><Link href="/privacy">{t('launch.privacy')}</Link></li>
         </ul>
-        <p className="footer__copy">© {new Date().getFullYear()} Rakesh Dry Cleaners. {t('footer.rights')}</p>
+        <p className="footer__copy">© {new Date().getFullYear()} {BUSINESS.name}. {t('footer.rights')}</p>
       </footer>
 
       {/* ── MAP MODAL ─────────────────────────────────────────────────────── */}

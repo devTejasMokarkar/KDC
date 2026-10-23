@@ -1,3 +1,5 @@
+import { BUSINESS } from './business';
+
 export type Locale = 'en' | 'mr' | 'hi';
 
 export const LOCALES: Locale[] = ['en', 'mr', 'hi'];
@@ -15,12 +17,26 @@ export const LANG_CODES: Record<Locale, string> = {
 };
 
 export const DOC_TITLES: Record<Locale, string> = {
-  en: 'Rakesh Dry Cleaners — Your neighbourhood garment-care shop in Wadi',
-  mr: 'राकेश ड्राय क्लीनर्स — वाडीतील आपले वस्त्र निगा केंद्र',
-  hi: 'राकेश ड्राय क्लीनर्स — वाडी में आपके पड़ोस की कपड़ों की देखभाल की दुकान',
+  en: `${BUSINESS.name} — Your neighbourhood garment-care shop in Wadi`,
+  mr: `${BUSINESS.name} — वाडीतील आपले वस्त्र निगा केंद्र`,
+  hi: `${BUSINESS.name} — वाडी में आपके पड़ोस की कपड़ों की देखभाल की दुकान`,
 };
 
 export const en: Record<string, string> = {
+  "bookingUx.addNotes": "Add special instructions (optional)",
+  "bookingUx.notesAdded": "Special instructions added",
+
+  "bookingUx.continue": "Continue",
+  "bookingUx.review": "Review",
+  "bookingUx.viewOrder": "Your order",
+  "bookingUx.estimate": "estimate",
+  "bookingUx.editOrder": "Edit items",
+  "bookingUx.hideItems": "Hide items",
+  "bookingUx.serviceDetails": "Prices & service details",
+  "bookingUx.priceNote": "Item prices are estimates. Pickup and any extra charges are confirmed separately.",
+  "bookingUx.cartHint": "Edit quantities here at any step.",
+  "bookingUx.stepHint": "Choose items, add collection details, then review your request.",
+
   "privacy.back": "Back to the website",
 
   "privacy.control": "You can clear your cart using Clear cart, remove saved language and item preferences through your browser’s site-data settings, and close the page to discard unsent pickup details. Contact the shop through its verified contact details about information you have sent in WhatsApp.",
@@ -168,7 +184,7 @@ export const en: Record<string, string> = {
   'nav.mobileAria': 'Mobile quick actions',
   'nav.openMenu': 'Open menu',
   'nav.closeMenu': 'Close menu',
-  'nav.wordmarkAria': 'Rakesh Dry Cleaners – home',
+  'nav.wordmarkAria': '{businessName} – home',
 
   'lang.switch': 'Change language',
   'lang.label': 'Language',
@@ -263,7 +279,7 @@ export const en: Record<string, string> = {
   "care.machineAlt": "Professional industrial laundry machine with a stainless steel drum and control panel",
   "care.machineCaption": "We use industrial equipment as part of our heavy-item cleaning service.",
 
-  'pillars.label': 'The Four Pillars of Rakesh Care',
+  'pillars.label': 'The Four Pillars of {businessShortName} Care',
   'pillar.0.title': 'Hand Washing',
   'pillar.0.desc':
     'Everyday clothes are washed carefully by hand, with attention to the fabric and finish. Heavy items such as blankets are cleaned using professional industrial machines.',
@@ -296,7 +312,7 @@ export const en: Record<string, string> = {
   'card.bookNow': 'Book now',
 
   'booking.label': 'Booking',
-  'booking.title': 'Fresh clothes start here.',
+  'booking.title': 'Book your laundry',
   'booking.sub':
     "Pick your items, choose a time, and we'll handle the rest. Simple, honest pricing.",
   'booking.step1': '1. Pick Your Items',
@@ -331,7 +347,7 @@ export const en: Record<string, string> = {
   'booking.ariaRemoveOne': 'Remove one {name}',
   'booking.ariaRemoveOrder': 'Remove {name} from order',
 
-  'wa.welcome': '*Welcome to Rakesh Dry Cleaners* 🧺',
+  'wa.welcome': '*Welcome to {businessName}* 🧺',
   'wa.bookingRequest': '*Booking Request*',
   'wa.collection': 'Collection: Home collection',
   'wa.date': 'Date: {value}',
@@ -342,9 +358,9 @@ export const en: Record<string, string> = {
   'wa.notes': 'Notes: {value}',
   'wa.orderSummary': '*Order Summary*',
   'wa.estimatedTotal': '*Estimated Total: ₹{value}*',
-  'wa.thankYou': '_Thank you for choosing Rakesh Dry Cleaners._',
+  'wa.thankYou': '_Thank you for choosing {businessName}._',
   'wa.chat': 'Chat with us on WhatsApp',
-  'wa.defaultMessage': 'Hello Rakesh Dry Cleaners! I would like to enquire about your services.',
+  'wa.defaultMessage': 'Hello {businessName}! I would like to enquire about your services.',
 
   'error.title': 'Something went wrong',
   'error.body': 'An unexpected error occurred while rendering the page.',
@@ -428,6 +444,20 @@ export const en: Record<string, string> = {
 };
 
 export const mr: Record<string, string> = {
+  "bookingUx.addNotes": "विशेष सूचना जोडा (पर्यायी)",
+  "bookingUx.notesAdded": "विशेष सूचना जोडल्या आहेत",
+
+  "bookingUx.continue": "पुढे जा",
+  "bookingUx.review": "तपासा",
+  "bookingUx.viewOrder": "तुमची ऑर्डर",
+  "bookingUx.estimate": "अंदाज",
+  "bookingUx.editOrder": "वस्तू बदला",
+  "bookingUx.hideItems": "वस्तू लपवा",
+  "bookingUx.serviceDetails": "किंमती आणि सेवेचे तपशील",
+  "bookingUx.priceNote": "वस्तूंच्या किंमती अंदाजे आहेत. पिकअप आणि इतर शुल्क वेगळे निश्चित केले जातील.",
+  "bookingUx.cartHint": "कोणत्याही टप्प्यावर येथे संख्या बदला.",
+  "bookingUx.stepHint": "वस्तू निवडा, संकलनाचे तपशील भरा आणि विनंती तपासा.",
+
   "privacy.back": "वेबसाइटवर परत जा",
 
   "privacy.control": "कार्ट साफ करा वापरून वस्तू काढा. भाषा व वस्तूंची जतन केलेली माहिती ब्राउझरच्या साइट डेटा सेटिंग्जमधून काढता येते. न पाठवलेले पिकअप तपशील काढण्यासाठी पेज बंद करा. WhatsApp वर पाठवलेल्या माहितीसाठी दुकानाच्या पडताळलेल्या संपर्कावर संपर्क करा.",
@@ -575,7 +605,7 @@ export const mr: Record<string, string> = {
   'nav.mobileAria': 'मोबाइल द्रुत क्रिया',
   'nav.openMenu': 'मेनू उघडा',
   'nav.closeMenu': 'मेनू बंद करा',
-  'nav.wordmarkAria': 'राकेश ड्राय क्लीनर्स – मुख्यपृष्ठ',
+  'nav.wordmarkAria': '{businessName} – मुख्यपृष्ठ',
 
   'lang.switch': 'भाषा बदला',
   'lang.label': 'भाषा',
@@ -670,7 +700,7 @@ export const mr: Record<string, string> = {
   "care.machineAlt": "स्टेनलेस स्टील ड्रम आणि नियंत्रण पॅनेल असलेली व्यावसायिक औद्योगिक धुलाई मशीन",
   "care.machineCaption": "जड वस्तूंच्या धुलाई सेवेसाठी आम्ही औद्योगिक उपकरणे वापरतो.",
 
-  'pillars.label': 'राकेश केअरचे चार आधारस्तंभ',
+  'pillars.label': '{businessShortName} केअरचे चार आधारस्तंभ',
   'pillar.0.title': 'हाताने धुणे',
   'pillar.0.desc':
     'रोजचे कपडे कापड आणि फिनिशकडे लक्ष देऊन हाताने धुतले जातात. ब्लँकेटसारख्या जड वस्तूंसाठी व्यावसायिक औद्योगिक मशीन वापरतो.',
@@ -703,7 +733,7 @@ export const mr: Record<string, string> = {
   'card.bookNow': 'आता बुक करा',
 
   'booking.label': 'बुकिंग',
-  'booking.title': 'तुमचे पिकअप शेड्यूल करा किंवा ड्रॉप-इन उपलब्धता तपासा.',
+  'booking.title': 'धुलाई बुक करा',
   'booking.sub': 'तुमच्या वस्तू निवडा, वेळ निवडा, बाकी आम्ही सांभाळतो. सोपे, प्रामाणिक दर.',
   'booking.step1': '१. तुमच्या वस्तू निवडा',
   'booking.step2': '२. पिकअप तपशील',
@@ -737,7 +767,7 @@ export const mr: Record<string, string> = {
   'booking.ariaRemoveOne': 'एक {name} काढा',
   'booking.ariaRemoveOrder': 'ऑर्डरमधून {name} काढा',
 
-  'wa.welcome': '*राकेश ड्राय क्लीनर्समध्ये स्वागत* 🧺',
+  'wa.welcome': '*{businessName}मध्ये स्वागत* 🧺',
   'wa.bookingRequest': '*बुकिंग विनंती*',
   'wa.collection': 'पिकअप: घरून पिकअप',
   'wa.date': 'तारीख: {value}',
@@ -748,9 +778,9 @@ export const mr: Record<string, string> = {
   'wa.notes': 'टीप: {value}',
   'wa.orderSummary': '*ऑर्डर सारांश*',
   'wa.estimatedTotal': '*अंदाजित एकूण: ₹{value}*',
-  'wa.thankYou': '_राकेश ड्राय क्लीनर्स निवडल्याबद्दल धन्यवाद._',
+  'wa.thankYou': '_{businessName} निवडल्याबद्दल धन्यवाद._',
   'wa.chat': 'व्हॉट्सअॅपवर चॅट करा',
-  'wa.defaultMessage': 'नमस्कार राकेश ड्राय क्लीनर्स! मला तुमच्या सेवांबद्दल विचारायचे आहे.',
+  'wa.defaultMessage': 'नमस्कार {businessName}! मला तुमच्या सेवांबद्दल विचारायचे आहे.',
 
   'error.title': 'काहीतरी चूक झाली',
   'error.body': 'पृष्ठ रेंडर करताना अनपेक्षित त्रुटी आली.',
@@ -834,6 +864,20 @@ export const mr: Record<string, string> = {
 };
 
 export const hi: Record<string, string> = {
+  "bookingUx.addNotes": "विशेष निर्देश जोड़ें (वैकल्पिक)",
+  "bookingUx.notesAdded": "विशेष निर्देश जोड़े गए हैं",
+
+  "bookingUx.continue": "आगे बढ़ें",
+  "bookingUx.review": "समीक्षा",
+  "bookingUx.viewOrder": "आपका ऑर्डर",
+  "bookingUx.estimate": "अनुमान",
+  "bookingUx.editOrder": "वस्तुएँ बदलें",
+  "bookingUx.hideItems": "वस्तुएँ छिपाएँ",
+  "bookingUx.serviceDetails": "कीमत और सेवा विवरण",
+  "bookingUx.priceNote": "वस्तुओं की कीमतें अनुमानित हैं। पिकअप और अतिरिक्त शुल्क अलग से तय होंगे।",
+  "bookingUx.cartHint": "किसी भी चरण में यहाँ मात्रा बदलें।",
+  "bookingUx.stepHint": "वस्तुएँ चुनें, संग्रह का विवरण भरें और अनुरोध जाँचें।",
+
   "privacy.back": "वेबसाइट पर वापस जाएँ",
 
   "privacy.control": "कार्ट साफ करें से वस्तुएँ हटाएँ। सहेजी गई भाषा और वस्तुओं को ब्राउज़र की साइट डेटा सेटिंग से हटाया जा सकता है। न भेजे गए पिकअप विवरण हटाने के लिए पेज बंद करें। WhatsApp में भेजी जानकारी के बारे में दुकान के सत्यापित संपर्क पर संपर्क करें।",
@@ -981,7 +1025,7 @@ export const hi: Record<string, string> = {
   'nav.mobileAria': 'मोबाइल त्वरित क्रियाएँ',
   'nav.openMenu': 'मेनू खोलें',
   'nav.closeMenu': 'मेनू बंद करें',
-  'nav.wordmarkAria': 'राकेश ड्राय क्लीनर्स – होम',
+  'nav.wordmarkAria': '{businessName} – होम',
 
   'lang.switch': 'भाषा बदलें',
   'lang.label': 'भाषा',
@@ -1076,7 +1120,7 @@ export const hi: Record<string, string> = {
   "care.machineAlt": "स्टेनलेस स्टील ड्रम और कंट्रोल पैनल वाली पेशेवर औद्योगिक धुलाई मशीन",
   "care.machineCaption": "भारी वस्तुओं की धुलाई सेवा में हम औद्योगिक उपकरणों का उपयोग करते हैं।",
 
-  'pillars.label': 'राकेश केयर के चार स्तंभ',
+  'pillars.label': '{businessShortName} केयर के चार स्तंभ',
   'pillar.0.title': 'हाथों से धुलाई',
   'pillar.0.desc':
     'रोज़मर्रा के कपड़े हाथों से धोए जाते हैं, कपड़े और फिनिश पर ध्यान देते हुए। कंबल जैसी भारी वस्तुओं के लिए पेशेवर औद्योगिक मशीनों का उपयोग करते हैं।',
@@ -1109,7 +1153,7 @@ export const hi: Record<string, string> = {
   'card.bookNow': 'अभी बुक करें',
 
   'booking.label': 'बुकिंग',
-  'booking.title': 'अपना पिकअप शेड्यूल करें या ड्रॉप-इन उपलब्धता देखें।',
+  'booking.title': 'धुलाई बुक करें',
   'booking.sub': 'अपनी वस्तुएँ चुनें, समय चुनें, बाकी हम संभाल लेंगे। सरल, ईमानदार कीमतें।',
   'booking.step1': '1. अपनी वस्तुएँ चुनें',
   'booking.step2': '2. पिकअप विवरण',
@@ -1143,7 +1187,7 @@ export const hi: Record<string, string> = {
   'booking.ariaRemoveOne': 'एक {name} हटाएँ',
   'booking.ariaRemoveOrder': 'ऑर्डर से {name} हटाएँ',
 
-  'wa.welcome': '*राकेश ड्राय क्लीनर्स में आपका स्वागत है* 🧺',
+  'wa.welcome': '*{businessName} में आपका स्वागत है* 🧺',
   'wa.bookingRequest': '*बुकिंग अनुरोध*',
   'wa.collection': 'पिकअप: घर से पिकअप',
   'wa.date': 'तारीख: {value}',
@@ -1154,9 +1198,9 @@ export const hi: Record<string, string> = {
   'wa.notes': 'नोट: {value}',
   'wa.orderSummary': '*ऑर्डर सारांश*',
   'wa.estimatedTotal': '*अनुमानित कुल: ₹{value}*',
-  'wa.thankYou': '_राकेश ड्राय क्लीनर्स चुनने के लिए धन्यवाद।_',
+  'wa.thankYou': '_{businessName} चुनने के लिए धन्यवाद।_',
   'wa.chat': 'व्हाट्सएप पर चैट करें',
-  'wa.defaultMessage': 'नमस्ते राकेश ड्राय क्लीनर्स! मैं आपकी सेवाओं के बारे में पूछताछ करना चाहता/चाहती हूँ।',
+  'wa.defaultMessage': 'नमस्ते {businessName}! मैं आपकी सेवाओं के बारे में पूछताछ करना चाहता/चाहती हूँ।',
 
   'error.title': 'कुछ गलत हो गया',
   'error.body': 'पृष्ठ रेंडर करते समय एक अप्रत्याशित त्रुटि हुई।',

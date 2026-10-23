@@ -27,7 +27,9 @@ export default function BookingClient({ initialCategory, initialSubcategory, sel
   const [cartReady, setCartReady] = useState(false);
   const [undo, setUndo] = useState<{ quantities: Quantities; message: string } | null>(null);
   const [clearOpen, setClearOpen] = useState(false);
+  const [orderExpanded, setOrderExpanded] = useState(false);
   const undoRef = useRef<HTMLButtonElement>(null);
+  const cartToggleRef = useRef<HTMLButtonElement>(null);
   const actionStep = useRef<Step>(0);
   const clearRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -47,7 +49,7 @@ export default function BookingClient({ initialCategory, initialSubcategory, sel
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(new Date()), 30000);
-    const showItems = () => { previousStep.current = 0; setStep(0); };
+    const showItems = () => { previousStep.current = 0; setOrderExpanded(false); setStep(0); };
     window.addEventListener('kdc:booking-items', showItems);
     try {
       const saved = JSON.parse(window.localStorage.getItem('kdc:cart:v1') ?? '{}');
@@ -56,7 +58,7 @@ export default function BookingClient({ initialCategory, initialSubcategory, sel
       }
     } catch { /* Browser storage is optional. */ }
     setCartReady(true);
-    setReference(`RDC-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`);
+    setReference(`${BUSINESS.referencePrefix}-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`);
     return () => { window.clearInterval(timer); window.removeEventListener('kdc:booking-items', showItems); };
   }, []);
 
@@ -67,7 +69,7 @@ export default function BookingClient({ initialCategory, initialSubcategory, sel
 
   useEffect(() => {
     if (initialCategory && (SERVICE_CATEGORIES as readonly string[]).includes(initialCategory)) {
-      setActiveMain(initialCategory); setSearch(''); setStep(0);
+      setActiveMain(initialCategory); setSearch(''); setOrderExpanded(false); setStep(0);
     }
   }, [initialCategory, selectionRequest]);
   useEffect(() => {
@@ -75,6 +77,15 @@ export default function BookingClient({ initialCategory, initialSubcategory, sel
     const requested = activeMain === initialCategory && subs.some(sub => sub.id === initialSubcategory) ? initialSubcategory : undefined;
     setActiveSub(requested ?? subs[0]?.id ?? null);
   }, [activeMain, initialCategory, initialSubcategory, selectionRequest]);
+  useEffect(() => {
+    for (const id of [`service-tab-${activeMain}`, `subcategory-tab-${activeSub}`]) {
+      const tab = document.getElementById(id);
+      const strip = tab?.parentElement;
+      if (!tab || !strip || strip.scrollWidth <= strip.clientWidth) continue;
+      const position = tab.getBoundingClientRect().left - strip.getBoundingClientRect().left;
+      strip.scrollTo?.({ left: strip.scrollLeft + position - (strip.clientWidth - tab.clientWidth) / 2, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    }
+  }, [activeMain, activeSub]);
   useEffect(() => {
     if (selectedDate && selectedTime && isSlotUnavailable(selectedDate, selectedTime, now)) setSelectedTime(null);
   }, [selectedDate, selectedTime, now]);
@@ -114,6 +125,7 @@ export default function BookingClient({ initialCategory, initialSubcategory, sel
     const current = quantities[id] ?? 0;
     if (current === next) return;
     actionStep.current = step;
+    if (next === 0 && current > 0) setOrderExpanded(true);
     if (next === 0 && current > 0) setUndo({ quantities: { ...quantities }, message: t('flow.removed', { name: itemName(id) }) });
     else setUndo(null);
     setQuantities(currentCart => next > 0 ? { ...currentCart, [id]: next } : Object.fromEntries(Object.entries(currentCart).filter(([key]) => key !== id)));
@@ -121,10 +133,12 @@ export default function BookingClient({ initialCategory, initialSubcategory, sel
   const clearCart = () => {
     actionStep.current = step;
     setUndo({ quantities: { ...quantities }, message: t('flow.cleared') });
+    setOrderExpanded(true);
     setQuantities({}); setClearOpen(false); setStep(0);
   };
   const undoChange = () => {
     if (!undo) return;
+    setOrderExpanded(true);
     setQuantities(undo.quantities); setUndo(null);
     requestAnimationFrame(() => document.getElementById('order-heading')?.focus({ preventScroll: true }));
   };
@@ -132,6 +146,10 @@ export default function BookingClient({ initialCategory, initialSubcategory, sel
     const result = checkPickupArea(pin, locality);
     setArea({ pin, locality, result });
     if (result === 'invalid') document.getElementById(!/^[1-9]\d{5}$/.test(pin) ? 'pickup-pin' : 'pickup-locality')?.focus();
+  };
+  const showOrder = () => {
+    setOrderExpanded(true);
+    requestAnimationFrame(() => scrollToSection('#order-review'));
   };
   const goToReview = () => {
     setAttemptedDetails(true);
@@ -177,12 +195,20 @@ export default function BookingClient({ initialCategory, initialSubcategory, sel
   return (
     <section id="book" className={`unified-booking-section guided-booking ${className}`} aria-labelledby="booking-headline" data-step={step}>
       <div className="unified-booking-inner">
-        <div className="booking-header"><span className="pillars-label">{t('booking.label')}</span><h2 id="booking-headline" tabIndex={-1}>{t('booking.title')}</h2><p className="booking-sub">{t('flow.intro')}</p></div>
+        <div className="booking-header"><span className="pillars-label">{t('booking.label')}</span><h2 id="booking-headline" tabIndex={-1}>{t('booking.title')}</h2><p className="booking-sub">{t('bookingUx.stepHint')}</p></div>
         <div className="guided-toolbar">
           <nav aria-label={t('flow.progress')} className="booking-progress"><ol>{stepKeys.map((key, index) => (
-            <li key={key}><button type="button" aria-current={step === index ? 'step' : undefined} disabled={index === 1 ? !itemsValid : index === 2 ? !itemsValid || !detailsValid : false} onClick={() => setStep(index as Step)}><span className="step-number" aria-hidden="true">{index < step ? '✓' : index + 1}</span><span>{t(key)}</span></button></li>
+            <li key={key}><button type="button" aria-current={step === index ? 'step' : undefined} disabled={index === 1 ? !itemsValid : index === 2 ? !itemsValid || !detailsValid : false} onClick={() => { setOrderExpanded(false); setStep(index as Step); }}><span className="step-number" aria-hidden="true">{index < step ? '✓' : index + 1}</span><span>{t(key)}</span></button></li>
           ))}</ol></nav>
-          <div className="booking-mini-cart"><div><span>{t(fee === null ? 'flow.itemsSubtotal' : 'booking.cartTotal')}</span><strong aria-live="polite" aria-atomic="true">₹{estimate}</strong></div><a href="#order-review">{t('flow.viewCart')} ↓</a></div>
+          <div className="booking-mini-cart">
+            <button ref={cartToggleRef} type="button" className="booking-cart-link" aria-expanded={orderExpanded || step === 2} aria-controls="order-review" onClick={showOrder} aria-label={t('flow.viewCart')}>
+              <span>{t(count === 1 ? 'booking.item' : 'booking.items', { n: count })} · {t('bookingUx.estimate')}</span>
+              <strong aria-live="polite" aria-atomic="true">₹{estimate}<span aria-hidden="true">⌄</span></strong>
+            </button>
+            {step === 0 ? <button type="button" className="btn-primary" disabled={!itemsValid} onClick={() => { setOrderExpanded(false); setStep(1); }}>{t('bookingUx.continue')} →</button>
+              : step === 1 ? <button type="button" className="btn-primary" onClick={goToReview}>{t('bookingUx.review')} →</button>
+              : <button type="button" className="btn-secondary" onClick={showOrder}>{t('bookingUx.viewOrder')} ↓</button>}
+          </div>
         </div>
         <div className="unified-booking-main">
           <div className="guided-stage" key={step}>
@@ -196,8 +222,9 @@ export default function BookingClient({ initialCategory, initialSubcategory, sel
                 {!activeItems.length && <p className="search-empty" role="status">{t('booking.noResults')}</p>}
                 {activeItems.map(item => <div className="pricing-item" key={item.id}><div><p className="pricing-item__label">{itemName(item.id)}</p><p className="pricing-item__price">₹{item.price} <span>{t(`flow.unit.${priceUnitFor(item.id)}`)}</span></p></div><QuantityControl value={quantities[item.id] ?? 0} name={itemName(item.id)} onChange={value => setQuantity(item.id, value)} /></div>)}
               </div>
-              <ServiceInformation category={activeMain} />
-              <div className="flow-actions"><button type="button" className="btn-primary" disabled={!itemsValid} onClick={() => setStep(1)}>{t('flow.nextPickup')} <span aria-hidden="true">→</span></button></div>
+              <p className="booking-price-note">{t('bookingUx.priceNote')}</p>
+              <details className="booking-service-details"><summary>{t('bookingUx.serviceDetails')}</summary><ServiceInformation category={activeMain} /></details>
+              <div className="flow-actions"><button type="button" className="btn-primary" disabled={!itemsValid} onClick={() => { setOrderExpanded(false); setStep(1); }}>{t('flow.nextPickup')} <span aria-hidden="true">→</span></button></div>
               {!count && <p className="field-hint">{t('booking.empty')}</p>}
               {count > 0 && !itemsValid && <p className="field-hint">{t('flow.minimumHint', { value: BOOKING_POLICY.minimumOrder ?? 0 })}</p>}
             </div>
@@ -220,26 +247,32 @@ export default function BookingClient({ initialCategory, initialSubcategory, sel
                 const date = new Date(now); date.setDate(date.getDate() + index); const value = toLocalDateString(date);
                 return <button key={value} id={index === 0 ? 'first-booking-date' : undefined} type="button" className={`date-pill${selectedDate === value ? ' active' : ''}`} aria-pressed={selectedDate === value} onClick={() => { setSelectedDate(value); if (selectedTime && isSlotUnavailable(value, selectedTime, now)) setSelectedTime(null); }}><span className="date-day">{index === 0 ? t('booking.today') : date.toLocaleDateString(locale, { weekday: 'short' })}</span><span className="date-num">{date.getDate()}</span></button>;
               })}</div>{attemptedDetails && !selectedDate && <p className="field-error">{t('flow.dateError')}</p>}</div>
-              <div className="booking-row"><span className="label" id="time-label">{t('booking.time')}</span><div className="time-grid" role="group" aria-labelledby="time-label">{TIME_SLOTS.map((slot, index) => <button key={slot} id={index === 0 ? 'first-booking-time' : undefined} type="button" className={`time-pill${selectedTime === slot && validTime ? ' active' : ''}`} disabled={!selectedDate || isSlotUnavailable(selectedDate, slot, now)} aria-pressed={selectedTime === slot && validTime} onClick={() => setSelectedTime(slot)}>{slot}</button>)}</div>{!selectedDate && <p className="field-hint">{t('booking.chooseDate')}</p>}{selectedDate && TIME_SLOTS.every(slot => isSlotUnavailable(selectedDate, slot, now)) && <p className="field-error">{t('booking.noTimes')}</p>}{attemptedDetails && selectedDate && !validTime && <p className="field-error">{t('flow.timeError')}</p>}</div>
-              <div className="booking-row"><label className="label" htmlFor="booking-instructions">{t('booking.instructionsLabel')}</label><textarea id="booking-instructions" maxLength={1000} value={instructions} onChange={event => setInstructions(event.target.value)} placeholder={t('booking.instructionsPlaceholder')} /></div>
-              <div className="flow-actions"><button type="button" className="btn-secondary" onClick={() => setStep(0)}>← {t('flow.back')}</button><button type="submit" className="btn-primary">{t('flow.nextReview')} →</button></div>
+              <div className="booking-row"><span className="label" id="time-label">{t('booking.time')}</span><div className="time-grid" hidden={!selectedDate} role="group" aria-labelledby="time-label">{TIME_SLOTS.map((slot, index) => <button key={slot} id={index === 0 ? 'first-booking-time' : undefined} type="button" className={`time-pill${selectedTime === slot && validTime ? ' active' : ''}`} disabled={!selectedDate || isSlotUnavailable(selectedDate, slot, now)} aria-pressed={selectedTime === slot && validTime} onClick={() => setSelectedTime(slot)}>{slot}</button>)}</div>{!selectedDate && <p className="field-hint">{t('booking.chooseDate')}</p>}{selectedDate && TIME_SLOTS.every(slot => isSlotUnavailable(selectedDate, slot, now)) && <p className="field-error">{t('booking.noTimes')}</p>}{attemptedDetails && selectedDate && !validTime && <p className="field-error">{t('flow.timeError')}</p>}</div>
+              <details className="booking-optional-notes"><summary>{t(instructions.trim() ? 'bookingUx.notesAdded' : 'bookingUx.addNotes')}</summary><div className="booking-row"><label className="label" htmlFor="booking-instructions">{t('booking.instructionsLabel')}</label><textarea id="booking-instructions" maxLength={1000} value={instructions} onChange={event => setInstructions(event.target.value)} placeholder={t('booking.instructionsPlaceholder')} /></div></details>
+              <div className="flow-actions"><button type="button" className="btn-secondary" onClick={() => { setOrderExpanded(false); setStep(0); }}>← {t('flow.back')}</button><button type="submit" className="btn-primary">{t('flow.nextReview')} →</button></div>
               {attemptedDetails && !detailsValid && <p className="field-error" role="alert">{t('flow.completeDetails')}</p>}
             </form>
             {step === 2 && <div className="booking-step review-details"><p className="flow-step-caption">{t('flow.stepOf', { n: 3 })}</p><h3 className="step-title" tabIndex={-1} ref={headingRef}>{t('flow.reviewTitle')}</h3><p className="review-intro">{t('flow.reviewIntro')}</p>
               <dl className="review-handover"><div><dt>{t('booking.collection')}</dt><dd>{t(method === 'pickup' ? 'booking.pickup' : 'booking.dropoff')}</dd></div>{method === 'pickup' && <><div><dt>{t('flow.locality')}</dt><dd>Wadi, Nagpur · {pin}</dd></div><div><dt>{t('booking.addressRequired')}</dt><dd>{pickupAddress}</dd></div></>}<div><dt>{t('booking.dateTime')}</dt><dd>{selectedDate ? formatDateString(selectedDate, locale) : '—'}{selectedTime ? `, ${selectedTime}` : ''}</dd></div>{instructions.trim() && <div><dt>{t('booking.instructionsLabel')}</dt><dd>{instructions}</dd></div>}</dl>
-              <button type="button" className="text-button" onClick={() => setStep(1)}>{t('flow.editDetails')} ↗</button><ServiceInformation /><div className="flow-actions"><button type="button" className="btn-secondary" onClick={() => setStep(1)}>← {t('flow.back')}</button><button type="button" className="text-button" onClick={() => setStep(0)}>{t('flow.editItems')}</button></div>
+              <button type="button" className="text-button" onClick={() => { setOrderExpanded(false); setStep(1); }}>{t('flow.editDetails')} ↗</button><ServiceInformation /><div className="flow-actions"><button type="button" className="btn-secondary" onClick={() => { setOrderExpanded(false); setStep(1); }}>← {t('flow.back')}</button><button type="button" className="text-button" onClick={() => { setOrderExpanded(false); setStep(0); }}>{t('flow.editItems')}</button></div>
             </div>}
           </div>
         </div>
-        <aside className="unified-booking-sidebar guided-order" id="order-review" aria-labelledby="order-heading">
+        <aside className={`unified-booking-sidebar guided-order${orderExpanded || step === 2 ? ' is-open' : ''}`} id="order-review" aria-labelledby="order-heading">
           <div className="summary-card"><div className="summary-title-row"><h3 className="summary-title" id="order-heading" tabIndex={-1}>{t('booking.yourOrder')}</h3><span className="summary-badge">{t(count === 1 ? 'booking.item' : 'booking.items', { n: count })}</span></div>
+            <div className="order-quick-summary">
+              {!count ? <p>{t('booking.empty')}</p> : <><div><span>{t(fee === null ? 'flow.beforePickup' : 'flow.estimateTotal')}</span><strong>₹{estimate}</strong></div>
+                {step !== 2 && <button type="button" className="text-button" aria-expanded={orderExpanded} aria-controls="order-summary-content" onClick={() => { setOrderExpanded(open => !open); if (orderExpanded) cartToggleRef.current?.focus({ preventScroll: true }); }}>{t(orderExpanded ? 'bookingUx.hideItems' : 'bookingUx.editOrder')}<span aria-hidden="true">{orderExpanded ? '−' : '＋'}</span></button>}</>}
+            </div>
+            <div id="order-summary-content" className={`order-summary-content${orderExpanded || step === 2 ? ' is-expanded' : ''}`}>
             {!!count && <button type="button" className="text-button clear-cart-button" onClick={() => setClearOpen(true)}>{t('flow.clearCart')}</button>}
             {undo && <div className="cart-undo"><p role="status">{undo.message}</p><button ref={undoRef} type="button" onClick={undoChange}>{t('flow.undo')}</button></div>}
             {!count ? <p className="summary-empty">{t('booking.empty')}</p> : <ul className="editable-cart">{orderItems.map(item => <li key={item.id}><div className="editable-cart__heading"><div><span className="cart-service-label">{t(`svc.${item.main}.label`)}</span><p>{itemName(item.id)}</p><span className="cart-unit-price">₹{item.price} {t(`flow.unit.${priceUnitFor(item.id)}`)}</span></div><button type="button" className="cart-remove" aria-label={t('booking.ariaRemoveOrder', { name: itemName(item.id) })} onClick={() => setQuantity(item.id, 0)}>×</button></div><div className="editable-cart__bottom"><QuantityControl value={item.quantity} name={itemName(item.id)} summary onChange={value => setQuantity(item.id, value)} /><strong>₹{item.total}</strong></div></li>)}</ul>}
-            <div className="flow-totals"><div><span>{t('flow.itemsSubtotal')}</span><strong>₹{subtotal}</strong></div><div><span>{t('flow.pickupCharge')}</span><strong>{feeLabel}</strong></div><div className="summary-total"><span>{t(fee === null ? 'flow.beforePickup' : 'flow.estimateTotal')}</span><strong>₹{estimate}</strong></div></div>
-            {fee === null && <p className="request-note">{t('flow.unknownChargeNote')}</p>}
-            {step === 2 && <div className="summary-actions">{!BUSINESS.whatsappNumber && <p className="field-error" role="status">{t('launch.bookingPending')}</p>}<button type="button" className="btn-primary full-width" disabled={!BUSINESS.whatsappNumber || !itemsValid || !detailsValid} onClick={handleSubmit}>{t('booking.confirm')}</button><p className="request-note">{t('booking.requestNote')}</p><p className="request-reference">{t('flow.reference')}: {reference}</p>{!detailsValid && <button type="button" className="text-button" onClick={() => setStep(1)}>{t('flow.editDetails')}</button>}</div>}
-            {step < 2 && <p className="request-note">{t('flow.cartHint')}</p>}
+            <div className="flow-totals">{!!count && <><div><span>{t('flow.itemsSubtotal')}</span><strong>₹{subtotal}</strong></div><div><span>{t('flow.pickupCharge')}</span><strong>{feeLabel}</strong></div></>}<div className="summary-total"><span>{t(fee === null ? 'flow.beforePickup' : 'flow.estimateTotal')}</span><strong>₹{estimate}</strong></div></div>
+            {count > 0 && fee === null && <p className="request-note">{t('flow.unknownChargeNote')}</p>}
+            {step === 2 && <div className="summary-actions">{!BUSINESS.whatsappNumber && <p className="field-error" role="status">{t('launch.bookingPending')}</p>}<button type="button" className="btn-primary full-width" disabled={!BUSINESS.whatsappNumber || !itemsValid || !detailsValid} onClick={handleSubmit}>{t('booking.confirm')}</button><p className="request-note">{t('booking.requestNote')}</p><p className="request-reference">{t('flow.reference')}: {reference}</p>{!detailsValid && <button type="button" className="text-button" onClick={() => { setOrderExpanded(false); setStep(1); }}>{t('flow.editDetails')}</button>}</div>}
+            {step < 2 && count > 0 && <p className="request-note">{t('bookingUx.cartHint')}</p>}
+            </div>
           </div>
         </aside>
       </div>

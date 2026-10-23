@@ -48,8 +48,23 @@ describe('Navbar', () => {
     render(<Navbar />);
     await user.click(screen.getAllByRole('link', { name: 'Services' })[0]);
 
-    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
+    expect(window.scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'instant' });
     el.remove();
+  });
+
+  it('releases the drawer scroll lock before starting anchor navigation', async () => {
+    const user = userEvent.setup();
+    const target = document.createElement('section');
+    target.id = 'services'; document.body.append(target);
+    render(<Navbar />);
+    await user.click(screen.getByRole('button', { name: 'Open menu' }));
+    expect(document.body.style.overflow).toBe('hidden');
+    let overflowWhenScrolling: string | undefined;
+    vi.mocked(window.scrollTo).mockImplementation(() => { overflowWhenScrolling = document.body.style.overflow; });
+    await user.click(screen.getByRole('dialog', { name: 'Navigation menu' }).querySelector('a[href="#services"]')!);
+    expect(overflowWhenScrolling).not.toBe('hidden');
+    expect(screen.getByRole('button', { name: 'Open menu' })).toHaveAttribute('aria-expanded', 'false');
+    target.remove();
   });
 
   it('routes to the homepage section when the target section is not on the page', async () => {

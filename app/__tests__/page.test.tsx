@@ -6,7 +6,7 @@ import { BUSINESS } from '@/lib/business';
 
 vi.mock('@/lib/business', async importOriginal => ({
   ...await importOriginal<typeof import('@/lib/business')>(),
-  BUSINESS: { phoneE164: null, whatsappNumber: null, email: null, address: null, openingHours: null, mapsUrl: null, mapsEmbedUrl: null },
+  BUSINESS: { ...((await importOriginal<typeof import('@/lib/business')>()).BUSINESS), phoneE164: null, whatsappNumber: null, email: null, address: null, openingHours: null, mapsUrl: null, mapsEmbedUrl: null },
 }));
 
 const location = window.location as { href: string };
@@ -28,6 +28,14 @@ describe('HomePage', () => {
     expect(document.getElementById('fabric-care')).toBeInTheDocument();
     expect(document.getElementById('contact-us')).toBeInTheDocument();
     expect(document.getElementById('book')).toBeInTheDocument();
+  });
+
+  it('places the compact care section between services and booking', () => {
+    render(<HomePage />);
+    const sections = Array.from(document.querySelectorAll('main > section')).map(section => section.id);
+    expect(sections.indexOf('fabric-care')).toBeGreaterThan(sections.indexOf('services'));
+    expect(sections.indexOf('fabric-care')).toBeLessThan(sections.indexOf('book'));
+    expect(document.querySelector('.care-more')).not.toHaveAttribute('open');
   });
 
   it('renders all service categories', () => {

@@ -55,6 +55,42 @@ describe('guided booking', () => {
     expect(screen.queryByRole('button', { name: /Send request on WhatsApp/ })).not.toBeInTheDocument();
   });
 
+  it('lets customers expand the compact order summary and continue from the toolbar', async () => {
+    const user = userEvent.setup();
+    render(<BookingClient />);
+    await addShirt(user);
+    const toggle = screen.getByRole('button', { name: /Edit items/ });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await user.click(toggle);
+    expect(screen.getByRole('button', { name: /Hide items/ })).toHaveAttribute('aria-expanded', 'true');
+    await user.click(screen.getByRole('button', { name: /Hide items/ }));
+    expect(document.getElementById('order-summary-content')).not.toHaveClass('is-expanded');
+    await user.click(screen.getByRole('button', { name: 'Continue →' }));
+    expect(currentStep()).toHaveTextContent('Pickup details');
+    await user.click(screen.getByRole('radio', { name: 'Shop drop-off' }));
+    await schedule(user);
+    await user.click(screen.getByRole('button', { name: 'Review →' }));
+    expect(currentStep()).toHaveTextContent('Review');
+    expect(document.getElementById('order-summary-content')).toHaveClass('is-expanded');
+  });
+
+  it('reveals times after choosing a date and keeps optional notes between steps', async () => {
+    const user = userEvent.setup();
+    render(<BookingClient />);
+    await addShirt(user); await pickupStep(user);
+    expect(screen.queryByRole('button', { name: '10:00 am' })).not.toBeInTheDocument();
+    await user.click(screen.getByRole('radio', { name: 'Shop drop-off' }));
+    await user.click(screen.getByText('Add special instructions (optional)'));
+    await user.type(screen.getByLabelText('Special instructions'), 'Please check the collar stain');
+    await schedule(user);
+    await user.click(screen.getByRole('button', { name: /Continue to review/ }));
+    expect(document.querySelector('.review-handover')).toHaveTextContent('Please check the collar stain');
+    await user.click(screen.getByRole('button', { name: /Edit pickup details/ }));
+    expect(screen.getByText('Special instructions added')).toBeInTheDocument();
+    await user.click(screen.getByText('Special instructions added'));
+    expect(screen.getByLabelText('Special instructions')).toHaveValue('Please check the collar stain');
+  });
+
   it('honours initial categories and changes category and subcategory', async () => {
     const user = userEvent.setup();
     render(<BookingClient initialCategory="dryclean" />);

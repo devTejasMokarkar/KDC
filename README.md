@@ -86,3 +86,19 @@ See [LAUNCH.md](LAUNCH.md) for the manual business, domain and real-phone checks
 `npm run check:launch` checks required contacts, business confirmation flags and the public HTTPS origin. Unknown contacts disable outbound actions. Search indexing stays disabled until `NEXT_PUBLIC_SITE_URL` and confirmed business settings are present. `/robots.txt`, `/sitemap.xml` and conditional business structured data use this configuration. Vercel previews remain unindexed.
 
 `/privacy` explains actual browser storage, session data and third-party connections in all three site languages. Standard response headers disable framing, MIME sniffing and unused browser permissions; the CSP limits objects, base URLs and frame ancestors rather than claiming to restrict every script.
+
+## Mobile booking and motion
+
+Fabric care now follows Services and precedes Booking, with a centered equipment image on phones and optional care details. The mobile booking toolbar keeps the item count, estimate and next step visible. The full cart opens on demand and remains fully expanded at Review; moving to another step collapses it to keep the next task visible. Desktop retains the full order summary.
+
+The navigation drawer slides and fades with staggered links. Anchor navigation starts after the drawer releases the background lock, uses a bounded eased animation, and cancels immediately on wheel, touch, pointer or scroll-key input. Reduced-motion visitors scroll immediately and get no drawer/stagger transitions.
+
+## Change the shop name and number
+
+Edit **`config/business.json`**, then restart the development server or rebuild/redeploy production. For example, set `"name": "Mukesh Dry Cleaners"` and `"phoneE164": "+91YOUR10DIGITNUMBER"` (replace the entire example with the real international number).
+
+The header, footer, privacy page, browser/search/share titles, hero initial, order reference prefix, and all English/Marathi/Hindi WhatsApp and care messages follow `name`. The header automatically separates a trailing “Dry Cleaners” into its smaller subtitle. The configured name is kept exactly as written across languages.
+
+Leave `whatsappNumber` as `null` to use the same phone number for WhatsApp. For a separate WhatsApp number, enter international digits without `+`. Contact links become available with valid configured numbers; business confirmation flags and the remaining launch settings still control search indexing. The favicon stays **K**, as requested, in `public/favicon.svg`.
+
+The `brand-kit/` files are standalone print artwork, not part of the running app. Edit their text separately before printing. A renamed deployment also needs its actual domain in `NEXT_PUBLIC_SITE_URL`.

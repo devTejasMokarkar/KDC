@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { scrollToSection } from '@/lib/navigation';
+import { cancelSectionScroll, scrollToSection } from '@/lib/navigation';
 import { initScrollReveal, initScrollProgress, initParallax } from '@/lib/scroll-animations';
 
 /**
@@ -39,6 +39,7 @@ export default function ScrollInitializer() {
 
     // Cleanup on unmount
     return () => {
+      cancelSectionScroll();
       document.removeEventListener('click', onAnchor);
       motion.removeEventListener('change', onMotion);
       revealObserver?.disconnect();

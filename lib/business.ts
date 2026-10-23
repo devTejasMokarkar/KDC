@@ -12,10 +12,15 @@ export function parseBusiness(input: Record<string, unknown>) {
     } catch { return null; }
   };
   const phone = text('phoneE164');
-  const whatsapp = text('whatsappNumber');
+  const whatsapp = text('whatsappNumber') ?? phone?.replace(/^\+/, '') ?? null;
+  const name = text('name') ?? 'Dry Cleaners';
+  const shortName = name.replace(/\s+Dry Cleaners$/i, '').trim() || name;
   const email = text('email');
   return {
-    name: text('name') ?? 'Rakesh Dry Cleaners',
+    name,
+    shortName,
+    monogram: Array.from(shortName)[0].toUpperCase(),
+    referencePrefix: name.split(/\s+/).map(word => Array.from(word)[0]).join('').toUpperCase().replace(/[^A-Z0-9]/g, '') || 'ORDER',
     phoneE164: phone && /^\+[1-9]\d{7,14}$/.test(phone) && phone !== '+919876543210' ? phone : null,
     whatsappNumber: whatsapp && /^[1-9]\d{7,14}$/.test(whatsapp) && whatsapp !== '919876543210' ? whatsapp : null,
     email: email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : null,

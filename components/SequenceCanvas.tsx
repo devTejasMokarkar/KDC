@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { BUSINESS } from '@/lib/business';
 import { useI18n } from '@/lib/i18n';
 
 // Keep these 45 sampled frame IDs in sync with the assets in both frame folders.
@@ -92,14 +93,14 @@ export default function SequenceCanvas() {
           <a className="hero-price-link" href="#pricing">{t('hero.prices')}<span aria-hidden="true">→</span></a>
         </div>
         <div className="care-hero__benefits"><span>✓ {t('hero.benefit1')}</span><span>✓ {t('hero.benefit2')}</span></div>
-        <div className="care-hero__footnote"><span className="hero-thread" aria-hidden="true">R.</span><p>{t('hero.footnote')}</p></div>
+        <div className="care-hero__footnote"><span className="hero-thread" aria-hidden="true">{BUSINESS.monogram}.</span><p>{t('hero.footnote')}</p></div>
       </div>
       <div className="care-hero__visual">
         <Image src="/frames/frame_000001.jpg" alt={t('hero.imageAlt')} fill priority sizes="(max-width: 900px) 100vw, 55vw" />
         <canvas ref={canvasRef} aria-hidden="true" />
         <div className="care-hero__shade" />
         <span className="care-hero__image-label">{t('hero.imageLabel')}</span>
-        <div className="care-hero__caption"><span>01 / {t('hero.captionLabel')}</span><p>{t('hero.caption')}</p><span className="care-hero__seal" aria-hidden="true">R</span></div>
+        <div className="care-hero__caption"><span>01 / {t('hero.captionLabel')}</span><p>{t('hero.caption')}</p><span className="care-hero__seal" aria-hidden="true">{BUSINESS.monogram}</span></div>
       </div>
     </section>
   );

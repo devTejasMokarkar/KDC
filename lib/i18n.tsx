@@ -10,6 +10,8 @@ import {
 } from 'react';
 import { dictionaries, DOC_TITLES, type Locale } from './translations';
 
+import { BUSINESS } from './business';
+
 const STORAGE_KEY = 'kdc:lang';
 
 type TranslateFn = (key: string, vars?: Record<string, string | number>) => string;
@@ -27,10 +29,9 @@ const interpolate = (
   vars?: Record<string, string | number>
 ) => {
   let out = template ?? '';
-  if (vars) {
-    for (const [key, value] of Object.entries(vars)) {
-      out = out.split(`{${key}}`).join(String(value));
-    }
+  const values = { businessName: BUSINESS.name, businessShortName: BUSINESS.shortName, ...vars };
+  for (const [key, value] of Object.entries(values)) {
+    out = out.split(`{${key}}`).join(String(value));
   }
   return out;
 };

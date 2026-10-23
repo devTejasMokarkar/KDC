@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
+import { BUSINESS } from '@/lib/business';
 import { useI18n } from '@/lib/i18n';
 
 export default function PrivacyPage() {
   const { t } = useI18n();
   return <main className="privacy-page">
     <Link href="/">← {t('privacy.back')}</Link>
-    <p className="eyebrow">Rakesh Dry Cleaners · Wadi</p>
+    <p className="eyebrow">{BUSINESS.name} · Wadi</p>
     <h1>{t('privacy.title')}</h1>
     <p>{t('privacy.intro')}</p>
     {['storage', 'whatsapp', 'providers', 'control'].map(section => <section key={section}>

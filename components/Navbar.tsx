@@ -70,6 +70,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
   const drawerRef = useRef<HTMLDivElement>(null);
+  const pendingNavigation = useRef<string | null>(null);
   useDialog(menuOpen, drawerRef, () => setMenuOpen(false));
 
 
@@ -121,8 +122,7 @@ export default function Navbar() {
   }, []);
 
   // Close menu and scroll to section
-  const handleNavClick = useCallback((href: string) => {
-    setMenuOpen(false);
+  const navigate = useCallback((href: string) => {
     if (href.startsWith('/')) {
       window.location.href = href;
       return;
@@ -131,6 +131,21 @@ export default function Navbar() {
     // Section not on the current page — route to the homepage section anchor.
     window.location.href = new URL(`/${href}`, window.location.origin).href;
   }, []);
+
+  const handleNavClick = useCallback((href: string) => {
+    if (menuOpen) {
+      pendingNavigation.current = href;
+      setMenuOpen(false);
+    } else navigate(href);
+  }, [menuOpen, navigate]);
+
+  // Start scrolling after the drawer releases its body lock and focus trap.
+  useEffect(() => {
+    if (menuOpen || !pendingNavigation.current) return;
+    const href = pendingNavigation.current;
+    pendingNavigation.current = null;
+    navigate(href);
+  }, [menuOpen, navigate]);
 
   return (
     <>
@@ -146,8 +161,8 @@ export default function Navbar() {
             aria-label={t('nav.wordmarkAria')}
             onClick={(e) => { e.preventDefault(); setMenuOpen(false); window.history.replaceState(null, '', '#the-process'); window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }}
           >
-            Rakesh
-            <span>Dry Cleaners</span>
+            {BUSINESS.shortName}
+            {BUSINESS.name !== BUSINESS.shortName && <span>{BUSINESS.name.slice(BUSINESS.shortName.length).trim()}</span>}
           </a>
 
           {/* Desktop center links */}
@@ -223,8 +238,8 @@ export default function Navbar() {
       >
         <button type="button" className="mobile-menu-close" onClick={() => setMenuOpen(false)} tabIndex={menuOpen ? 0 : -1} aria-label={t('nav.closeMenu')}>×</button>
         <ul role="list">
-          {NAV_LINKS.map((link) => (
-            <li key={link.href}>
+          {NAV_LINKS.map((link, index) => (
+            <li key={link.href} style={{ transitionDelay: menuOpen ? `${70 + index * 35}ms` : '0ms' }}>
               <a
                 href={link.href}
                 className={activeSection === link.href ? 'active' : ''}
@@ -240,14 +255,12 @@ export default function Navbar() {
       </div>
 
       {/* Backdrop */}
-      {menuOpen && (
         <div
-          className="mobile-menu-backdrop"
+          className={`mobile-menu-backdrop${menuOpen ? ' is-open' : ''}`}
           data-modal-backdrop
           onClick={() => setMenuOpen(false)}
           aria-hidden="true"
         />
-      )}
     </>
   );
 }

@@ -10,12 +10,13 @@ import './redesign.css';
 export const metadata: Metadata = {
   metadataBase: SITE_URL ? new URL(SITE_URL) : undefined,
   robots: { index: INDEX_SITE, follow: INDEX_SITE },
-  title: 'Rakesh Dry Cleaners — Your neighbourhood garment-care shop in Wadi',
+  title: `${BUSINESS.name} — Your neighbourhood garment-care shop in Wadi`,
   description:
     'Your neighbourhood garment-care shop in Wadi, Nagpur. Hand washing for everyday clothes, professional cleaning for heavy items, dry cleaning, ironing and mending.',
-  keywords: 'Wadi, Nagpur, neighbourhood laundry, dry cleaning, garment care, Rakesh, fabric care, steam pressing, wash and iron, rafoo mending, colour restore, doorstep pickup, doorstep delivery',
+  keywords: `${BUSINESS.name}, Wadi, Nagpur, neighbourhood laundry, dry cleaning, garment care, fabric care, steam pressing, wash and iron, rafoo mending, colour restore, doorstep pickup, doorstep delivery`,
+  icons: { icon: "/favicon.svg?v=k" },
   openGraph: {
-    title: 'Rakesh Dry Cleaners — Your neighbourhood garment-care shop in Wadi',
+    title: `${BUSINESS.name} — Your neighbourhood garment-care shop in Wadi`,
     description: 'Your neighbourhood garment-care shop in Wadi. Washing, dry cleaning, ironing and mending, with local pickup or shop drop-off.',
     type: 'website',
     ...(SITE_URL ? { url: SITE_URL } : {}),
@@ -27,7 +28,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="theme-color" content="#FAF8F3" />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
